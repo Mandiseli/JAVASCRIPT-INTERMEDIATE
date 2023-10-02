@@ -864,3 +864,8 @@ const array2 = new Uint8Array([4, 5, 6]);
 const concatenatedArray = concatUint8Arrays([array1, array2]);
 
 console.log(concatenatedArray); // Outputs: Uint8Array [ 1, 2, 3, 4, 5, 6 ]
+
+DAY 5 ASSESSMENT DAY
+
+We wrote an assessment
+and after the assessment i got busy with my portfolio.
