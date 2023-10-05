@@ -869,3 +869,679 @@ DAY 5 ASSESSMENT DAY
 
 We wrote an assessment
 and after the assessment i got busy with my portfolio.
+
+JAVASCRIPT INTERMEDIATE
+WEEK2: FILES PATTERN AND FLAGS
+DAY 1: FILE OBJECTS
+
+FETCH
+
+In JavaScript, the `fetch` API is used for making network requests, typically to retrieve data from a remote server or to send data to a server. It provides a more modern and flexible way to work with HTTP requests compared to older methods like `XMLHttpRequest`. The `fetch` API is promise-based, which makes it suitable for handling asynchronous operations.
+
+Here's how to use the `fetch` API in JavaScript:
+
+1. **Basic Usage**:
+
+   The simplest usage of the `fetch` function involves providing the URL of the resource you want to fetch. It returns a promise that resolves to the `Response` object representing the response to the request.
+
+   ```javascript
+   fetch('https://api.example.com/data')
+     .then(response => {
+       if (!response.ok) {
+         throw new Error('Network response was not ok');
+       }
+       return response.json(); // Parse the response as JSON
+     })
+     .then(data => {
+       // Work with the data
+       console.log(data);
+     })
+     .catch(error => {
+       console.error('There was a problem with the fetch operation:', error);
+     });
+   ```
+
+2. **Handling JSON Data**:
+
+   In the above example, `response.json()` is used to parse the response body as JSON. This is a common practice when dealing with APIs that return JSON data.
+
+3. **Handling Errors**:
+
+   The `fetch` API doesn't throw an error for HTTP error responses (e.g., 404 or 500). You need to check the `response.ok` property or use the `throw` statement as shown in the example to handle such cases.
+
+4. **Setting Request Options**:
+
+   You can customize the request by providing an optional second argument to the `fetch` function. This argument is an object where you can set various options like headers, HTTP method, and request body.
+
+   ```javascript
+   fetch('https://api.example.com/data', {
+     method: 'POST',
+     headers: {
+       'Content-Type': 'application/json',
+       // Add other headers as needed
+     },
+     body: JSON.stringify({ key: 'value' }),
+   })
+     .then(response => response.json())
+     .then(data => {
+       // Handle the response data
+     })
+     .catch(error => {
+       console.error('Error:', error);
+     });
+   ```
+
+5. **Async/Await**:
+
+   You can also use async/await syntax to make the code more readable:
+
+   ```javascript
+   async function fetchData() {
+     try {
+       const response = await fetch('https://api.example.com/data');
+       if (!response.ok) {
+         throw new Error('Network response was not ok');
+       }
+       const data = await response.json();
+       console.log(data);
+     } catch (error) {
+       console.error('Error:', error);
+     }
+   }
+
+   fetchData();
+   ```
+
+6. **Cross-Origin Requests (CORS)**:
+
+   When making requests to a different origin (domain), you may encounter Cross-Origin Resource Sharing (CORS) restrictions. The server must include appropriate CORS headers to allow your web page to make requests to it.
+
+7. **Working with Headers and Cookies**:
+
+   You can manipulate headers and cookies using the `Headers` and `Request` objects to send custom headers or cookies with your request.
+
+The `fetch` API is powerful and flexible, making it suitable for a wide range of HTTP request scenarios in web development.
+
+JavaScript can send network requests to the server and load new information whenever is needed.
+
+For example, we can:
+
+Submit an order,
+
+Load user information,
+
+Receive latest updates from the server,
+
+· …etc.
+
+…And all of that without reloading the page!
+
+There’s an umbrella term “AJAX” (abbreviated Asynchronous Javascript And Xml) for that. We don’t have to use XML though: the term comes from old times, that’s that word is there.
+
+There are multiple ways to send a network request and get information from the server.
+
+The fetch() method is modern and versatile, so we’ll start with it. It evolved for several years and continues to improve, right now the support is pretty solid among browsers.
+
+The basic syntax is:
+
+let promise = fetch(url, [options])
+
+url – the URL to access.
+
+options – optional parameters: method, headers etc.
+
+The browser starts the request right away and returns a promise.
+
+Getting a response is usually a two-stage process.
+
+First, the promise resolves with an object of the built-in Response class as soon as the server responds with headers.
+
+So we can check HTTP status, to see whether it is successful or not, check headers, but don’t have the body yet.
+
+The promise rejects if the fetch was unable to make HTTP-request, e.g. network problems, or there’s no such site. HTTP-errors, even such as 404 or 500, are considered a normal flow.
+
+We can see them in response properties:
+
+· ok – boolean, true if the HTTP status code is 200-299.
+
+status – HTTP status code.
+
+ACTIVITY 3
+
+Response provides multiple promise-based methods to access the body in various formats:
+
+response.json() – parse the response as JSON object,
+response.text() – return the response as text,
+response.formData() – return the response as FormData object (form/multipart encoding, explained in the next chapter),
+response.blob() – return the response as Blob(binary data with type),
+response.arrayBuffer() – return the response as ArrayBuffer (pure binary data),
+additionally, response.body is a ReadableStreamobject, it allows to read the body chunk-by-chunk, we’ll see an example later.
+
+But there’s a list of forbidden HTTP headers that we can’t set:
+
+· Accept-Charset, Accept-Encoding
+
+· Access-Control-Request-Headers
+
+· Access-Control-Request-Method
+
+· Connection
+
+· Content-Length
+
+· Cookie, Cookie2
+
+· Date
+
+· DNT
+
+· Expect
+
+· Host
+
+· Keep-Alive
+
+· Origin
+
+· Referer
+
+· TE
+
+· Trailer
+
+· Transfer-Encoding
+
+· Upgrade
+
+· Via
+
+· Proxy-*
+
+· Sec-*
+
+These headers ensure proper and safe HTTP, so they are controlled exclusively by the browser.
+
+POST REQUEST
+
+To make a POST request, or a request with another method, we need to use fetch options:
+
+method – HTTP-method, e.g. POST,
+body – one of:
+a string (e.g. JSON),
+FormData object, to submit the data as form/multipart,
+Blob/BufferSource to send binary data,
+URLSearchParams, to submit the data in x-www-form-urlencoded encoding, rarely used.
+
+In JavaScript, you can make a POST request using the 'fetch'  API, which allows you to send data to server.
+
+SENDING AN IMAGE
+
+- We can also submit binary data directly using Blob or BufferSource. 
+- Sending an image in a POST Request using JavaScript, you can use the 'fetch' API to send the message as part of the request body.
+
+Response properties:
+
+response.status – HTTP code of the response,
+
+response.ok – true is the status is 200-299.
+
+response.headers – Map-like object with HTTP headers.
+
+Methods to get response body:
+
+response.json() – parse the response as JSON object,
+
+response.text() – return the response as text,
+
+response.formData() – return the response as FormData object (form/multipart encoding, see the next chapter),
+
+response.blob() – return the response as Blob(binary data with type),
+
+response.arrayBuffer() – return the response as ArrayBuffer (pure binary data),
+
+Fetch options so far:
+
+method – HTTP-method,
+
+headers – an object with request headers (not any header is allowed),
+
+body – string, FormData, BufferSource, Blob or UrlSearchParams object to send.
+
+ACTIVITY 4: FETCH USERS FROM GITHUB
+
+To fetch users from GitHub using JavaScript, you can make a GET request to the GitHub API. The GitHub API provides endpoints for retrieving information about users, repositories, and more. Here's an example of how to fetch users from GitHub using the `fetch` API:
+
+```javascript
+// Define the GitHub API endpoint for searching users
+const apiUrl = 'https://api.github.com/search/users';
+
+// Define the query parameters for the search (e.g., searching for users with the username "example")
+const queryParams = {
+  q: 'example', // Replace 'example' with your desired search query
+};
+
+// Build the URL with query parameters
+const url = new URL(apiUrl);
+url.search = new URLSearchParams(queryParams);
+
+// Make a GET request to the GitHub API
+fetch(url)
+  .then(response => {
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+    return response.json(); // Parse the response as JSON
+  })
+  .then(data => {
+    // Handle the response data
+    const users = data.items; // An array of user objects
+    console.log(users);
+  })
+  .catch(error => {
+    console.error('Error:', error);
+  });
+```
+
+In this code:
+
+1. You define the GitHub API endpoint for searching users, which is `https://api.github.com/search/users`.
+
+2. You define query parameters using the `queryParams` object. In this example, we are searching for users with the username "example." Replace `'example'` with your desired search query.
+
+3. You use the `URL` and `URLSearchParams` objects to build the URL with the query parameters.
+
+4. You make a GET request to the GitHub API using the `fetch` function, passing in the constructed URL.
+
+5. You handle the response in the promise chain. If the response status is not okay (i.e., it's not in the 200-299 range), an error is thrown. Otherwise, you parse the response as JSON and work with the response data.
+
+Please note that GitHub API requests may require authentication for certain endpoints or to increase your rate limits. If you plan to make many requests or need access to private user data, consider using OAuth tokens or personal access tokens for authentication.
+
+
+JAVASCRIPT INTERMEDIATE
+WEEK 2
+DAY 2: FORM DATA
+SENDING A SIMPLE FORM
+
+In JavaScript, you can work with form data in several ways. Form data typically refers to the data entered by users in HTML forms. You can access and manipulate this data using JavaScript. Here are some common tasks related to form data in JavaScript:
+
+1. Accessing Form Elements:
+   To access form elements, you can use the `document.getElementById()` or `document.querySelector()` methods. Here's an example:
+
+   ```html
+   <form id="myForm">
+       <input type="text" id="username" name="username" />
+       <input type="password" id="password" name="password" />
+       <button type="submit">Submit</button>
+   </form>
+
+   <script>
+       const form = document.getElementById("myForm");
+       const usernameInput = document.getElementById("username");
+       const passwordInput = document.getElementById("password");
+
+       // You can now work with these form elements
+   </script>
+   ```
+
+2. Handling Form Submission:
+   You can listen for the form's `submit` event and prevent the default action to handle form submission with JavaScript. Here's an example:
+
+   ```html
+   <form id="myForm">
+       <input type="text" id="username" name="username" />
+       <input type="password" id="password" name="password" />
+       <button type="submit">Submit</button>
+   </form>
+
+   <script>
+       const form = document.getElementById("myForm");
+
+       form.addEventListener("submit", function (event) {
+           event.preventDefault(); // Prevent the form from submitting
+           
+           // Access and process form data here
+           const username = form.username.value;
+           const password = form.password.value;
+
+           // Perform validation or submit data to a server, etc.
+       });
+   </script>
+   ```
+
+3. Getting Form Field Values:
+   To access the values entered by the user in form fields, you can use the `.value` property of form elements. For example:
+
+   ```javascript
+   const username = usernameInput.value;
+   const password = passwordInput.value;
+   ```
+
+4. Validating Form Data:
+   You can validate the user's input before submitting the form. For example, checking if required fields are filled, validating email addresses, or ensuring that passwords meet certain criteria.
+
+5. Modifying Form Data:
+   You can also programmatically set values for form elements using JavaScript. For example, you can set default values or update the form based on user interactions.
+
+6. Sending Form Data to a Server:
+   If you want to send the form data to a server, you can use techniques like AJAX requests, the Fetch API, or traditional form submission to handle the data submission.
+
+Remember that when dealing with form data in JavaScript, it's important to validate and sanitize the data on the server-side to ensure security and prevent malicious input.
+
+These are the basic concepts for working with form data in JavaScript. Depending on your specific use case, you may need to perform additional tasks or use libraries like jQuery or frameworks like React for more complex form handling.
+
+FORMDATA METHODS
+
+The FormData object in JavaScript provides several methods to work with form data in an HTML form. These methods allow you to manipulate and retrieve data from form elements. 
+
+We can modify fields in FormData with methods:
+
+formData.append(name, value) – add a form field with the given name and value,
+formData.append(name, blob, fileName) – add a field as if it were <input type="file">, the third argument fileName sets file name (not form field name), as it it were a name of the file in user’s filesystem,
+formData.delete(name) – remove the field with the given name,
+formData.get(name) – get the value of the field with the given name,
+formData.has(name) – if there exists a field with the given name, returns true, otherwise false
+A form is technically allowed to have many fields with the same name, so multiple calls to append add more same-named fields.
+
+There’s also method set, with the same syntax as append. The difference is that .set removes all fields with the given name, and then appends a new field. So it makes sure there’s only field with such name:
+
+formData.set(name, value),
+formData.set(name, blob, fileName).
+
+SENDING A FORM WITH A FILE
+
+Sending a form with a file in JavaScript involves using the `FormData` object to construct the form data, including the file input, and then sending it to a server using the `fetch` API or other methods. Here's a step-by-step guide on how to send a form with a file using JavaScript:
+
+1. Create an HTML form that includes a file input field:
+
+```html
+<!DOCTYPE html>
+<html>
+<head>
+    <title>File Upload Form</title>
+</head>
+<body>
+    <form id="fileUploadForm" enctype="multipart/form-data">
+        <label for="file">Choose a file:</label>
+        <input type="file" id="file" name="file" required><br><br>
+        
+        <button type="submit">Upload</button>
+    </form>
+
+    <script src="script.js"></script>
+</body>
+</html>
+```
+
+2. Create a JavaScript file (e.g., `script.js`) to handle the form submission:
+
+```javascript
+document.addEventListener("DOMContentLoaded", function () {
+    const form = document.getElementById("fileUploadForm");
+
+    form.addEventListener("submit", function (event) {
+        event.preventDefault(); // Prevent the default form submission
+
+        const formData = new FormData(form);
+
+        // You can now send the form data (including the file) to a server using the fetch API
+        fetch("your_server_endpoint_here", {
+            method: "POST",
+            body: formData,
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error("Network response was not ok");
+            }
+            return response.text(); // or response.json() if the server responds with JSON
+        })
+        .then(data => {
+            // Handle the server response here
+            console.log("Server response:", data);
+        })
+        .catch(error => {
+            // Handle errors here
+            console.error("There was a problem with the fetch operation:", error);
+        });
+    });
+});
+```
+
+3. Replace `"your_server_endpoint_here"` with the actual URL where you want to send the form data, including the file. This URL should be the endpoint on your server that handles file uploads.
+
+4. When the user selects a file and submits the form, the JavaScript code will prevent the default form submission, create a `FormData` object containing the form data (including the file), and then use the `fetch` API to send the data to the specified server endpoint.
+
+5. You can handle the server's response within the `.then()` block and implement any further logic needed.
+
+Note that when handling file uploads on the server side, you'll need to configure your server to accept and process file uploads and store them in an appropriate location. The specific server-side implementation may vary depending on your server technology (e.g., Node.js, PHP, Python, etc.).
+
+SENDING A FORM WITH BLOB DATA
+
+You can send a form with Blob data using JavaScript and the `FormData` object. Blobs are often used to represent binary data, such as files. Here's how you can send a form with Blob data:
+
+1. Create an HTML form that includes a file input field and other form elements if needed:
+
+```html
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Form with Blob Data</title>
+</head>
+<body>
+    <form id="blobUploadForm">
+        <!-- Other form fields -->
+        <input type="text" id="textData" name="textData" placeholder="Text Data"><br><br>
+
+        <label for="file">Choose a file:</label>
+        <input type="file" id="file" name="file" accept=".txt" required><br><br>
+        
+        <button type="submit">Upload</button>
+    </form>
+
+    <script src="script.js"></script>
+</body>
+</html>
+```
+
+2. Create a JavaScript file (e.g., `script.js`) to handle the form submission:
+
+```javascript
+document.addEventListener("DOMContentLoaded", function () {
+    const form = document.getElementById("blobUploadForm");
+
+    form.addEventListener("submit", function (event) {
+        event.preventDefault(); // Prevent the default form submission
+
+        const textData = document.getElementById("textData").value;
+
+        const fileInput = document.getElementById("file");
+        const file = fileInput.files[0]; // Get the selected file
+
+        if (!file) {
+            alert("Please select a file.");
+            return;
+        }
+
+        // Create a FormData object and append the Blob data
+        const formData = new FormData();
+        formData.append("textData", textData);
+        formData.append("file", file);
+
+        // You can now send the form data (including the Blob data) to a server using the fetch API
+        fetch("your_server_endpoint_here", {
+            method: "POST",
+            body: formData,
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error("Network response was not ok");
+            }
+            return response.text(); // or response.json() if the server responds with JSON
+        })
+        .then(data => {
+            // Handle the server response here
+            console.log("Server response:", data);
+        })
+        .catch(error => {
+            // Handle errors here
+            console.error("There was a problem with the fetch operation:", error);
+        });
+    });
+});
+```
+
+3. Replace `"your_server_endpoint_here"` with the actual URL where you want to send the form data, including the Blob data. This URL should be the endpoint on your server that handles the form submission.
+
+4. When the user selects a file and submits the form, the JavaScript code will prevent the default form submission, retrieve the text data and Blob data, create a `FormData` object, and then use the `fetch` API to send the data to the specified server endpoint.
+
+5. You can handle the server's response within the `.then()` block and implement any further logic needed.
+
+This example demonstrates how to send a form with Blob data, including a text field and a file input. The server-side implementation should handle both the text data and the Blob data appropriately.
+
+FETCH: DOWNLOAD PROGRESS
+
+To track the download progress of a file fetched using the `fetch` API in JavaScript, you can use the `response.body` and the `ReadableStream` interface. You can monitor the progress by reading chunks of data and calculating the total bytes received.
+The fetch method allows to track download progress.
+
+Please note: there’s currently no way for fetch to track upload progress. For that purpose, please use XMLHttpRequest, we’ll cover it later.
+
+To track download progress, we can use response.body property. It’s a “readable stream” – a special object that provides body chunk-by-chunk, as it comes.
+
+Unlike response.text(), response.json() and other methods, response.body gives full control over the reading process, and we can count how much is consumed at any moment.
+The result of await reader.read() call is an object with two properties:
+
+done – true when the reading is complete.
+value – a typed array of bytes: Uint8Array.
+We wait for more chunks in the loop, until done is true.
+
+
+ Here's an example of how to do this:
+
+```javascript
+const url = 'https://example.com/yourfile.zip'; // Replace with the URL of the file you want to download
+
+fetch(url)
+  .then(response => {
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+    
+    // Get the content length from the response headers
+    const contentLength = response.headers.get('content-length');
+    const total = parseInt(contentLength, 10);
+
+    // Initialize variables to track progress
+    let received = 0;
+
+    // Create a new ReadableStream to read the response body
+    const reader = response.body.getReader();
+
+    // Define a function to recursively read chunks of data
+    function readChunk() {
+      reader.read().then(({ done, value }) => {
+        if (done) {
+          // All data has been received
+          console.log('Download complete!');
+        } else {
+          // Update progress
+          received += value.byteLength;
+          const percentage = (received / total) * 100;
+          console.log(`Downloaded ${received} bytes (${percentage.toFixed(2)}%)`);
+
+          // Continue reading the next chunk
+          readChunk();
+        }
+      }).catch(error => {
+        console.error('Error reading data:', error);
+      });
+    }
+
+    // Start reading the chunks
+    readChunk();
+  })
+  .catch(error => {
+    console.error('Fetch error:', error);
+  });
+```
+
+In this example:
+
+1. We initiate a `fetch` request to download the file from the specified URL.
+
+2. We check if the response status is OK. If not, we handle the error accordingly.
+
+3. We retrieve the `content-length` header from the response to determine the total size of the file.
+
+4. We set up variables to keep track of the bytes received and create a `ReadableStream` using `response.body.getReader()`.
+
+5. We define a `readChunk` function that reads a chunk of data from the stream. When a chunk is received, we update the progress and continue reading the next chunk until all data has been received.
+
+6. We start reading the chunks by calling `readChunk()`.
+
+This code will log the progress of the file download as it happens. You can modify it to suit your needs, such as displaying the progress to the user or taking other actions when the download is complete.
+
+FETCH: ABORT
+
+You can use the `AbortController` and `AbortSignal` to cancel a fetch request in JavaScript. This allows you to stop a fetch operation before it completes, which can be useful in scenarios where the user decides to cancel the request or in response to some other event. Here's how you can use it:
+
+```javascript
+// Create an AbortController
+const abortController = new AbortController();
+
+// Get the AbortSignal from the AbortController
+const abortSignal = abortController.signal;
+
+// Create a fetch request with the AbortSignal
+const url = 'https://example.com/api/data';
+const options = {
+  method: 'GET',
+  signal: abortSignal,
+};
+
+// Perform the fetch request
+const fetchPromise = fetch(url, options);
+
+// Add an event listener to a cancel button or some other event
+const cancelButton = document.getElementById('cancelButton');
+if (cancelButton) {
+  cancelButton.addEventListener('click', () => {
+    // Call the abort method on the AbortController to cancel the request
+    abortController.abort();
+  });
+}
+
+// Handle the fetch request response
+fetchPromise
+  .then(response => {
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+    return response.json();
+  })
+  .then(data => {
+    // Process the fetched data
+    console.log(data);
+  })
+  .catch(error => {
+    if (error.name === 'AbortError') {
+      console.log('Fetch was aborted by the user or some event.');
+    } else {
+      console.error('Fetch error:', error);
+    }
+  });
+```
+
+In this example:
+
+1. We create an `AbortController` and obtain the associated `AbortSignal` from it.
+
+2. We use the `AbortSignal` by passing it as the `signal` property in the `fetch` options.
+
+3. We start the fetch request, and it will be associated with the `AbortController`.
+
+4. We add an event listener to a cancel button or some other event. When this event is triggered, we call the `abort()` method on the `AbortController`, which cancels the fetch request.
+
+5. We handle the fetch request as usual, but we also handle the potential `AbortError` that may occur if the request is aborted.
+
+By using the `AbortController`, you can gracefully cancel fetch requests, which is particularly useful in scenarios where you want to provide users with the ability to cancel long-running operations or handle specific events that require the request to be stopped.
+
+
