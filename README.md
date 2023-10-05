@@ -1545,3 +1545,318 @@ In this example:
 By using the `AbortController`, you can gracefully cancel fetch requests, which is particularly useful in scenarios where you want to provide users with the ability to cancel long-running operations or handle specific events that require the request to be stopped.
 
 
+JAVASCRIPT INTERMEDIATE
+WEEK 2
+DAY 3:FETCH: CROSS ORIGIN REQUEST
+FETCH: CROSS-ORIGIN REQUESTS
+
+If we make a fetch from an arbitrary web-site, that will probably fail.
+
+The core concept here is origin – a domain/port/protocol triplet.
+
+Cross-origin requests – those sent to another domain (even a subdomain) or protocol or port – require special headers from the remote side. That policy is called “CORS”: Cross-Origin Resource Sharing.
+
+For instance, let’s try fetching http://example.com:
+
+try {
+
+  await fetch('http://example.com');
+
+} catch(err) {
+
+  alert(err); // Failed to fetch
+
+}
+
+Fetch fails, as expected.
+
+Why? A brief history
+Because cross-origin restrictions protect the internet from evil hackers.
+
+Seriously. Let’s make a very brief historical digression.
+
+For many years a script from one site could not access the content of another site.
+
+That simple, yet powerful rule was a foundation of internet security. E.g. a script from the page hacker.com could not access the user’s mailbox at gmail.com. People felt safe.
+
+JavaScript also did not have any special methods to perform network requests at that time. It was a toy language to decorate a web page.
+
+But web developers demanded more power. A variety of tricks were invented to work around the limitation.
+
+
+USING FORMS
+
+- Using forms is a fundamental aspect of web development and allows users to input data, which can then be submitted to a server for processing. HTML provides a set of elements and attributes to create forms.
+
+- One way to communicate with another server was to submit a <form> there. People submitted it into <iframe>, just to stay on the current page, like this:
+
+<iframe name="iframe"></iframe>
+<form tagert="iframe" method="POST" action="url">
+</form>
+
+So, it was possible to make a GET/POST request to another site, even without networking methods. But as it’s forbidden to access the content of an <iframe>from another site, it wasn’t possible to read the response.
+
+As we can see, forms allowed to send data anywhere, but not receive the response. To be precise, there were actually tricks for that (required special scripts at both the iframe and the page), but let these dinosaurs rest in peace.
+
+SIMPLE REQUEST
+
+There are two types of cross-domain requests:
+
+Simple requests.
+
+All the others.
+
+Simple Requests are, well, simpler to make, so let’s start with them.
+
+A simple request is a request that satisfies two conditions:
+
+Simple method: GET, POST or HEAD
+
+Simple headers – the only allowed custom headers are:
+
+Accept,
+Accept-Language,
+Content-Language,
+Content-Type with the value application/x-www-form-urlencoded, multipart/form-data or text/plain.
+
+Any other request is considered “non-simple”. For instance, a request with PUT method or with an API-Key HTTP-header does not fit the limitations.
+
+The essential difference is that a “simple request” can be made with a <form> or a <script>, without any special methods.
+
+So, even a very old server should be ready to accept a simple request.
+
+Contrary to that, requests with non-standard headers or e.g. method DELETE can’t be created this way. For a long time, JavaScript was unable to do such requests. So an old server may assume that such requests come from a privileged source, “because a webpage is unable to send them”.
+
+When we try to make a non-simple request, the browser sends a special “preflight” request that asks the server – does it agree to accept such cross-origin requests, or not?
+
+And, unless the server explicitly confirms that with headers, a non-simple request is not sent.
+
+Now we’ll go into details. All of them serve a single purpose – to ensure that new cross-origin capabilities are only accessible with explicit permission from the server.
+
+CORS FOR SIMPLE REQUESTS
+
+If a request is cross-origin, the browser always adds Origin header to it.
+
+For instance, if we request https://anywhere.com/request from https://javascript.info/page, the headers will be like:
+
+GET /request
+Host: anywhere.com
+Origin: https://javascript.info
+
+As you can see, Origin contains exactly the origin (domain/protocol/port), without a path.
+
+The server can inspect the Origin and, if it agrees to accept such a request, adds a special header Access-Control-Allow-Origin to the response. That header should contain the allowed origin (in our case https://javascript.info), or a star *. Then the response is successful, otherwise an error.
+
+The browser plays the role of a trusted mediator here:
+
+It ensures that the correct Origin is sent with a cross-domain request.
+
+If checks for correct Access-Control-Allow-Origin in the response, if it is so, then JavaScript access, otherwise forbids with an error.
+
+
+**RESPONSE HEADERS**
+
+For cross-origin requests, JavaScript has limitations on which response headers it can access by default. These headers are known as "simple response headers" and include:
+
+1. **Cache-Control**
+2. **Content-Language**
+3. **Content-Type**
+4. **Expires**
+5. **Last-Modified**
+6. **Pragma**
+
+However, there's one notable omission from this list:
+
+- **No Content-Length Header:** JavaScript is not granted access to the `Content-Length` header by default. This header provides the full length of the response content. If you want to track the percentage of progress when downloading something, you need additional permissions to access this header.
+
+To allow JavaScript to access any other response header, the server must explicitly list it in the `Access-Control-Expose-Headers` header. Here's an example:
+
+```http
+HTTP/1.1 200 OK
+Content-Type: text/html; charset=UTF-8
+Content-Length: 12345
+API-Key: 2c9de507f2c54aa1
+Access-Control-Allow-Origin: https://javascript.info
+Access-Control-Expose-Headers: Content-Length, API-Key
+```
+
+In this example, the server is allowing the script running on a page from "https://javascript.info" to access the `Content-Length` and `API-Key` headers of the response because they are listed in the `Access-Control-Expose-Headers` header.
+
+Understanding these rules for response headers is important when working with cross-origin requests in JavaScript, especially when dealing with scenarios like tracking download progress or accessing custom headers.
+
+
+NON-SIMPLE REQUESTS
+
+Non-simple requests, also known as complex requests, refer to HTTP requests that are more intricate and potentially have a greater impact on the server compared to simple requests. These requests do not meet the criteria for simple requests and often involve HTTP methods other than GET, POST, or HEAD or include certain types of custom headers. Handling non-simple requests involves additional considerations, particularly with regards to Cross-Origin Resource Sharing (CORS).
+
+Here are some key characteristics of non-simple requests:
+
+1. **HTTP Methods:** Non-simple requests often use HTTP methods other than GET, POST, or HEAD. Methods such as PUT, DELETE, PATCH, or custom methods fall into this category.
+
+2. **Custom Headers:** These requests may include custom headers that are not part of the standard set of headers used in simple requests.
+
+3. **Preflight Requests:** Non-simple requests typically trigger preflight requests. Preflight requests are OPTIONS requests sent by the browser to the target server before the actual request. The purpose of the preflight request is to check whether the actual request from the specified origin is permitted by the server.
+
+4. **CORS Configuration:** To handle non-simple requests, the server must be configured to respond to preflight requests and include the appropriate CORS headers in the response. This includes headers like `Access-Control-Allow-Origin`, `Access-Control-Allow-Methods`, and `Access-Control-Allow-Headers`.
+
+5. **Credentials:** If the non-simple request includes credentials, such as cookies or HTTP authentication, the server must be configured to handle credentials by including `Access-Control-Allow-Credentials: true` in the CORS headers.
+
+6. **Error Handling:** Proper error handling is crucial when dealing with non-simple requests, as they can have a more significant impact on the server. Servers should provide informative error responses and handle exceptions gracefully.
+
+Here's an example of a preflight request and a corresponding actual request for a non-simple request:
+
+**Preflight (OPTIONS) Request:**
+
+```http
+OPTIONS /api/resource HTTP/1.1
+Host: example.com
+Origin: https://clientwebsite.com
+Access-Control-Request-Method: PUT
+Access-Control-Request-Headers: X-Custom-Header
+```
+
+**Actual (PUT) Request:**
+
+```http
+PUT /api/resource HTTP/1.1
+Host: example.com
+Origin: https://clientwebsite.com
+Content-Type: application/json
+X-Custom-Header: custom-value
+
+{"data": "updated"}
+```
+
+In this example, the preflight request is sent to check if the PUT request with custom headers is allowed. If the server responds with the appropriate CORS headers, the actual request is sent.
+
+Handling non-simple requests correctly is crucial for securing web applications and ensuring that cross-origin interactions do not pose security risks or unintentional side effects on the server. Servers must be configured to support CORS and respond appropriately to preflight requests.
+
+
+CREDENTIALS
+
+In JavaScript, credentials are typically used in the context of making network requests, particularly when using the Fetch API or XMLHttpRequest to interact with web services or APIs that require authentication. Credentials are used to specify how cookies, HTTP authentication, and other user credentials are included with the request.
+
+There are three possible values for the `credentials` property when making a fetch request:
+
+1. `"same-origin"` (default): This setting sends credentials if the request is made to the same origin as the requesting page. It includes cookies and HTTP authentication headers if applicable.
+
+```javascript
+fetch('https://example.com/api/data', {
+  credentials: 'same-origin',
+  // other options
+})
+```
+
+2. `"include"`: This setting always sends credentials, regardless of the origin. It includes cookies and HTTP authentication headers with the request.
+
+```javascript
+fetch('https://example.com/api/data', {
+  credentials: 'include',
+  // other options
+})
+```
+
+3. `"omit"`: This setting never sends credentials with the request, even if it's a same-origin request.
+
+```javascript
+fetch('https://example.com/api/data', {
+  credentials: 'omit',
+  // other options
+})
+```
+
+These credentials settings are important for security and privacy reasons. By default, JavaScript fetch requests are subject to the same-origin policy, which means that they can only access resources on the same domain unless the server explicitly allows cross-origin requests (using CORS headers). The `credentials` property gives you control over whether to include authentication information with cross-origin requests or not.
+
+Remember to use these options responsibly, especially when dealing with sensitive user data or authentication. Always follow best practices for web security when working with credentials in JavaScript.
+
+
+FETCH API
+
+The Fetch API is a modern JavaScript interface for making network requests (HTTP requests) in web applications. It provides a more powerful and flexible way to interact with web resources compared to the older XMLHttpRequest.
+
+Here's an overview of how to use the Fetch API:
+
+1. **Making a Simple GET Request:**
+
+   ```javascript
+   fetch('https://api.example.com/data')
+     .then(response => {
+       if (!response.ok) {
+         throw new Error('Network response was not ok');
+       }
+       return response.json(); // Parse the response body as JSON
+     })
+     .then(data => {
+       // Use the data from the response
+       console.log(data);
+     })
+     .catch(error => {
+       // Handle errors
+       console.error('Fetch error:', error);
+     });
+   ```
+
+   In this example, we use `fetch` to send a GET request to a URL. It returns a Promise that resolves to the Response object. We check if the response is OK (status code 200-299) and then parse the response body as JSON.
+
+2. **Making Other Types of Requests (POST, PUT, DELETE, etc.):**
+
+   You can specify the HTTP method and include request headers and a request body as needed when making non-GET requests:
+
+   ```javascript
+   fetch('https://api.example.com/resource', {
+     method: 'POST', // or 'PUT', 'DELETE', etc.
+     headers: {
+       'Content-Type': 'application/json',
+       // Other headers as needed
+     },
+     body: JSON.stringify({ key: 'value' }) // Request body data
+   })
+     .then(/* Handle the response as before */)
+     .catch(/* Handle errors */);
+   ```
+
+3. **Handling Responses:**
+
+   You can use methods like `json()`, `text()`, or `blob()` on the Response object to parse the response body in different formats:
+
+   ```javascript
+   fetch('https://api.example.com/text')
+     .then(response => response.text()) // Parse response as text
+     .then(text => {
+       console.log(text);
+     });
+   ```
+
+4. **Handling Errors:**
+
+   Use `.catch()` to handle any network errors or exceptions that occur during the fetch operation.
+
+5. **Advanced Configuration:**
+
+   Fetch allows you to configure various options, such as setting request headers, specifying credentials, and more. You can include these options in the second argument to `fetch`.
+
+6. **Async/Await Syntax:**
+
+   You can use `async` and `await` to write asynchronous code that looks more synchronous:
+
+   ```javascript
+   async function fetchData() {
+     try {
+       const response = await fetch('https://api.example.com/data');
+       if (!response.ok) {
+         throw new Error('Network response was not ok');
+       }
+       const data = await response.json();
+       console.log(data);
+     } catch (error) {
+       console.error('Fetch error:', error);
+     }
+   }
+   ```
+
+The Fetch API provides a more modern and consistent way to perform network operations in JavaScript, making it easier to work with data from APIs and other web resources.
+
+
+
+
+
