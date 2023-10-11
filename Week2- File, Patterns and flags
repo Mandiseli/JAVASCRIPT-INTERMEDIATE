@@ -1,0 +1,1541 @@
+DAY 1
+
+FILE AND FILEREADER
+
+- In JavaScript the file and fileReader objects are used to work with files and read their contents in a web application.
+- These objects are commonly used with the HTML <input type="file"> element to allow user to select and manipulate files on their local device.
+1. FILE OBJECT("FILE"):
+- The file object represents a file on the user's device that has been selected via an <input type="file"> element
+- You can access a file selected by the user through the 'files' propety of an <input> element :
+
+const fileInput = document. getElementById('file-input');
+const file = fileInput.files[0]; //Get the first selected file
+
+2. FILEREADER OBJECT(FILEREADER):
+- The "filereader" object is used to read the content of a 'file' object asynchronously.
+- You create an instance of 'fileReader' and use its method to read the file content:
+
+const fileReader = new fileReader();
+
+
+FILE READER
+
+FileReader is an object with the sole purpose of reading data from Blob (and hence File too) objects. It delivers the data using events as reading from disk may take time.
+
+The constructor is as follows:
+
+let reader = new FileReader(); // no arguments
+
+The main method is as follows:
+
+readAsArrayBuffer(blob) – read the data in binary format ArrayBuffer.
+readAsText(blob, [encoding]) – read the data as a text string with the given encoding (utf-8by default).
+readAsDataURL(blob) – read the binary data and encode it as base64 data url.
+abort() – cancel the operation.
+The choice of read method depends on which format we prefer, how we are going to use data.
+
+readAsArrayBuffer – for binary files, to do low-level binary operations. For high-level operations, like slicing, File inherits from Blob, so we can call them directly, without reading.
+
+readAsText – for text files, when we’d like to get a string.
+
+readAsDataURL – when we’d like to use this data in src for img or another tag. There’s an alternative to reading a file for that, as discussed in chapter Blob: URL.createObjectURL(file).
+
+As the reading proceeds, there are events:
+
+loadstart – loading started.
+progress – occurs during reading.
+load – no errors, reading complete.
+abort – abort() called.
+error – error has occurred.
+loadend – reading finished with either success or failure.
+When the reading is finished, we can access the result as:
+
+reader.result is the result (if successful)
+reader.error is the error (if failed).
+
+FileReader for blobs
+
+As mentioned in the chapter Blob, FileReadercan read not just files, but any blobs.
+
+We can use it to convert a blob to another format:
+
+readAsArrayBuffer(blob) – to ArrayBuffer,
+readAsText(blob, [encoding]) – to string (an alternative to TextDecoder),
+readAsDataURL(blob) – to base64 data url.
+FileReaderSync is available inside Web Workers
+
+For Web Workers, there also exists a synchronous variant of FileReader, called FileReaderSync.
+
+Its reading methods read* do not generate events, but rather return a result, as regular functions do.
+
+That’s only inside a Web Worker though, because delays in synchronous calls, that are possible while reading from files, in Web Workers are less important. They do not affect the page.
+
+In summary the following can be noted for File objects inherit from Blob.
+
+In addition to Blob methods and properties, Fileobjects also have name and lastModifiedproperties, plus the internal ability to read from filesystem. We usually get File objects from user input, like <input> or Drag’n’Drop events (ondragend).
+
+FileReader objects can read from a file or a blob, in one of three formats:
+
+String (readAsText).
+ArrayBuffer (readAsArrayBuffer).
+Data url, base-64 encoded (readAsDataURL).
+In many cases though, we don’t have to read the file contents. Just as we did with blobs, we can create a short url with URL.createObjectURL(file) and assign it to <a> or <img>. This way the file can be downloaded or shown up as an image, as a part of canvas etc.
+
+And if we’re going to send a File over a network, that’s also easy: network API like XMLHttpRequest or fetch natively accepts File objects
+
+
+FETCH
+
+In JavaScript, the `fetch` API is used for making network requests, typically to retrieve data from a remote server or to send data to a server. It provides a more modern and flexible way to work with HTTP requests compared to older methods like `XMLHttpRequest`. The `fetch` API is promise-based, which makes it suitable for handling asynchronous operations.
+
+Here's how to use the `fetch` API in JavaScript:
+
+1. **Basic Usage**:
+
+   The simplest usage of the `fetch` function involves providing the URL of the resource you want to fetch. It returns a promise that resolves to the `Response` object representing the response to the request.
+
+   ```javascript
+   fetch('https://api.example.com/data')
+     .then(response => {
+       if (!response.ok) {
+         throw new Error('Network response was not ok');
+       }
+       return response.json(); // Parse the response as JSON
+     })
+     .then(data => {
+       // Work with the data
+       console.log(data);
+     })
+     .catch(error => {
+       console.error('There was a problem with the fetch operation:', error);
+     });
+   ```
+
+2. **Handling JSON Data**:
+
+   In the above example, `response.json()` is used to parse the response body as JSON. This is a common practice when dealing with APIs that return JSON data.
+
+3. **Handling Errors**:
+
+   The `fetch` API doesn't throw an error for HTTP error responses (e.g., 404 or 500). You need to check the `response.ok` property or use the `throw` statement as shown in the example to handle such cases.
+
+4. **Setting Request Options**:
+
+   You can customize the request by providing an optional second argument to the `fetch` function. This argument is an object where you can set various options like headers, HTTP method, and request body.
+
+   ```javascript
+   fetch('https://api.example.com/data', {
+     method: 'POST',
+     headers: {
+       'Content-Type': 'application/json',
+       // Add other headers as needed
+     },
+     body: JSON.stringify({ key: 'value' }),
+   })
+     .then(response => response.json())
+     .then(data => {
+       // Handle the response data
+     })
+     .catch(error => {
+       console.error('Error:', error);
+     });
+   ```
+
+5. **Async/Await**:
+
+   You can also use async/await syntax to make the code more readable:
+
+   ```javascript
+   async function fetchData() {
+     try {
+       const response = await fetch('https://api.example.com/data');
+       if (!response.ok) {
+         throw new Error('Network response was not ok');
+       }
+       const data = await response.json();
+       console.log(data);
+     } catch (error) {
+       console.error('Error:', error);
+     }
+   }
+
+   fetchData();
+   ```
+
+6. **Cross-Origin Requests (CORS)**:
+
+   When making requests to a different origin (domain), you may encounter Cross-Origin Resource Sharing (CORS) restrictions. The server must include appropriate CORS headers to allow your web page to make requests to it.
+
+7. **Working with Headers and Cookies**:
+
+   You can manipulate headers and cookies using the `Headers` and `Request` objects to send custom headers or cookies with your request.
+
+The `fetch` API is powerful and flexible, making it suitable for a wide range of HTTP request scenarios in web development.
+
+JavaScript can send network requests to the server and load new information whenever is needed.
+
+For example, we can:
+
+Submit an order,
+
+Load user information,
+
+Receive latest updates from the server,
+
+· …etc.
+
+…And all of that without reloading the page!
+
+There’s an umbrella term “AJAX” (abbreviated Asynchronous Javascript And Xml) for that. We don’t have to use XML though: the term comes from old times, that’s that word is there.
+
+There are multiple ways to send a network request and get information from the server.
+
+The fetch() method is modern and versatile, so we’ll start with it. It evolved for several years and continues to improve, right now the support is pretty solid among browsers.
+
+The basic syntax is:
+
+let promise = fetch(url, [options])
+
+url – the URL to access.
+
+options – optional parameters: method, headers etc.
+
+The browser starts the request right away and returns a promise.
+
+Getting a response is usually a two-stage process.
+
+First, the promise resolves with an object of the built-in Response class as soon as the server responds with headers.
+
+So we can check HTTP status, to see whether it is successful or not, check headers, but don’t have the body yet.
+
+The promise rejects if the fetch was unable to make HTTP-request, e.g. network problems, or there’s no such site. HTTP-errors, even such as 404 or 500, are considered a normal flow.
+
+We can see them in response properties:
+
+· ok – boolean, true if the HTTP status code is 200-299.
+
+status – HTTP status code.
+
+
+ACTIVITY 3
+
+Response provides multiple promise-based methods to access the body in various formats:
+
+response.json() – parse the response as JSON object,
+response.text() – return the response as text,
+response.formData() – return the response as FormData object (form/multipart encoding, explained in the next chapter),
+response.blob() – return the response as Blob(binary data with type),
+response.arrayBuffer() – return the response as ArrayBuffer (pure binary data),
+additionally, response.body is a ReadableStreamobject, it allows to read the body chunk-by-chunk, we’ll see an example later.
+
+But there’s a list of forbidden HTTP headers that we can’t set:
+
+· Accept-Charset, Accept-Encoding
+
+· Access-Control-Request-Headers
+
+· Access-Control-Request-Method
+
+· Connection
+
+· Content-Length
+
+· Cookie, Cookie2
+
+· Date
+
+· DNT
+
+· Expect
+
+· Host
+
+· Keep-Alive
+
+· Origin
+
+· Referer
+
+· TE
+
+· Trailer
+
+· Transfer-Encoding
+
+· Upgrade
+
+· Via
+
+· Proxy-*
+
+· Sec-*
+
+These headers ensure proper and safe HTTP, so they are controlled exclusively by the browser.
+
+
+POST REQUEST
+
+To make a POST request, or a request with another method, we need to use fetch options:
+
+method – HTTP-method, e.g. POST,
+body – one of:
+a string (e.g. JSON),
+FormData object, to submit the data as form/multipart,
+Blob/BufferSource to send binary data,
+URLSearchParams, to submit the data in x-www-form-urlencoded encoding, rarely used.
+
+In JavaScript, you can make a POST request using the 'fetch'  API, which allows you to send data to server.
+
+
+SENDING AN IMAGE
+
+- We can also submit binary data directly using Blob or BufferSource. 
+- Sending an image in a POST Request using JavaScript, you can use the 'fetch' API to send the message as part of the request body.
+
+Response properties:
+
+response.status – HTTP code of the response,
+
+response.ok – true is the status is 200-299.
+
+response.headers – Map-like object with HTTP headers.
+
+Methods to get response body:
+
+response.json() – parse the response as JSON object,
+
+response.text() – return the response as text,
+
+response.formData() – return the response as FormData object (form/multipart encoding, see the next chapter),
+
+response.blob() – return the response as Blob(binary data with type),
+
+response.arrayBuffer() – return the response as ArrayBuffer (pure binary data),
+
+Fetch options so far:
+
+method – HTTP-method,
+
+headers – an object with request headers (not any header is allowed),
+
+body – string, FormData, BufferSource, Blob or UrlSearchParams object to send.
+
+
+ACTIVITY 4: FETCH USERS FROM GITHUB
+
+To fetch users from GitHub using JavaScript, you can make a GET request to the GitHub API. The GitHub API provides endpoints for retrieving information about users, repositories, and more. Here's an example of how to fetch users from GitHub using the `fetch` API:
+
+```javascript
+// Define the GitHub API endpoint for searching users
+const apiUrl = 'https://api.github.com/search/users';
+
+// Define the query parameters for the search (e.g., searching for users with the username "example")
+const queryParams = {
+  q: 'example', // Replace 'example' with your desired search query
+};
+
+// Build the URL with query parameters
+const url = new URL(apiUrl);
+url.search = new URLSearchParams(queryParams);
+
+// Make a GET request to the GitHub API
+fetch(url)
+  .then(response => {
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+    return response.json(); // Parse the response as JSON
+  })
+  .then(data => {
+    // Handle the response data
+    const users = data.items; // An array of user objects
+    console.log(users);
+  })
+  .catch(error => {
+    console.error('Error:', error);
+  });
+```
+
+In this code:
+
+1. You define the GitHub API endpoint for searching users, which is `https://api.github.com/search/users`.
+
+2. You define query parameters using the `queryParams` object. In this example, we are searching for users with the username "example." Replace `'example'` with your desired search query.
+
+3. You use the `URL` and `URLSearchParams` objects to build the URL with the query parameters.
+
+4. You make a GET request to the GitHub API using the `fetch` function, passing in the constructed URL.
+
+5. You handle the response in the promise chain. If the response status is not okay (i.e., it's not in the 200-299 range), an error is thrown. Otherwise, you parse the response as JSON and work with the response data.
+
+Please note that GitHub API requests may require authentication for certain endpoints or to increase your rate limits. If you plan to make many requests or need access to private user data, consider using OAuth tokens or personal access tokens for authentication.
+
+
+DAY 2
+
+SENDING A SIMPLE FORM
+
+In JavaScript, you can work with form data in several ways. Form data typically refers to the data entered by users in HTML forms. You can access and manipulate this data using JavaScript. Here are some common tasks related to form data in JavaScript:
+
+1. Accessing Form Elements:
+   To access form elements, you can use the `document.getElementById()` or `document.querySelector()` methods. Here's an example:
+
+   ```html
+   <form id="myForm">
+       <input type="text" id="username" name="username" />
+       <input type="password" id="password" name="password" />
+       <button type="submit">Submit</button>
+   </form>
+
+   <script>
+       const form = document.getElementById("myForm");
+       const usernameInput = document.getElementById("username");
+       const passwordInput = document.getElementById("password");
+
+       // You can now work with these form elements
+   </script>
+   ```
+
+2. Handling Form Submission:
+   You can listen for the form's `submit` event and prevent the default action to handle form submission with JavaScript. Here's an example:
+
+   ```html
+   <form id="myForm">
+       <input type="text" id="username" name="username" />
+       <input type="password" id="password" name="password" />
+       <button type="submit">Submit</button>
+   </form>
+
+   <script>
+       const form = document.getElementById("myForm");
+
+       form.addEventListener("submit", function (event) {
+           event.preventDefault(); // Prevent the form from submitting
+           
+           // Access and process form data here
+           const username = form.username.value;
+           const password = form.password.value;
+
+           // Perform validation or submit data to a server, etc.
+       });
+   </script>
+   ```
+
+3. Getting Form Field Values:
+   To access the values entered by the user in form fields, you can use the `.value` property of form elements. For example:
+
+   ```javascript
+   const username = usernameInput.value;
+   const password = passwordInput.value;
+   ```
+
+4. Validating Form Data:
+   You can validate the user's input before submitting the form. For example, checking if required fields are filled, validating email addresses, or ensuring that passwords meet certain criteria.
+
+5. Modifying Form Data:
+   You can also programmatically set values for form elements using JavaScript. For example, you can set default values or update the form based on user interactions.
+
+6. Sending Form Data to a Server:
+   If you want to send the form data to a server, you can use techniques like AJAX requests, the Fetch API, or traditional form submission to handle the data submission.
+
+Remember that when dealing with form data in JavaScript, it's important to validate and sanitize the data on the server-side to ensure security and prevent malicious input.
+
+These are the basic concepts for working with form data in JavaScript. Depending on your specific use case, you may need to perform additional tasks or use libraries like jQuery or frameworks like React for more complex form handling.
+
+
+FORMDATA METHODS
+
+The FormData object in JavaScript provides several methods to work with form data in an HTML form. These methods allow you to manipulate and retrieve data from form elements. 
+
+We can modify fields in FormData with methods:
+
+formData.append(name, value) – add a form field with the given name and value,
+formData.append(name, blob, fileName) – add a field as if it were <input type="file">, the third argument fileName sets file name (not form field name), as it it were a name of the file in user’s filesystem,
+formData.delete(name) – remove the field with the given name,
+formData.get(name) – get the value of the field with the given name,
+formData.has(name) – if there exists a field with the given name, returns true, otherwise false
+A form is technically allowed to have many fields with the same name, so multiple calls to append add more same-named fields.
+
+There’s also method set, with the same syntax as append. The difference is that .set removes all fields with the given name, and then appends a new field. So it makes sure there’s only field with such name:
+
+formData.set(name, value),
+formData.set(name, blob, fileName).
+
+
+SENDING A FORM WITH BLOB DATA
+
+You can send a form with Blob data using JavaScript and the `FormData` object. Blobs are often used to represent binary data, such as files. Here's how you can send a form with Blob data:
+
+1. Create an HTML form that includes a file input field and other form elements if needed:
+
+```html
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Form with Blob Data</title>
+</head>
+<body>
+    <form id="blobUploadForm">
+        <!-- Other form fields -->
+        <input type="text" id="textData" name="textData" placeholder="Text Data"><br><br>
+
+        <label for="file">Choose a file:</label>
+        <input type="file" id="file" name="file" accept=".txt" required><br><br>
+        
+        <button type="submit">Upload</button>
+    </form>
+
+    <script src="script.js"></script>
+</body>
+</html>
+```
+
+2. Create a JavaScript file (e.g., `script.js`) to handle the form submission:
+
+```javascript
+document.addEventListener("DOMContentLoaded", function () {
+    const form = document.getElementById("blobUploadForm");
+
+    form.addEventListener("submit", function (event) {
+        event.preventDefault(); // Prevent the default form submission
+
+        const textData = document.getElementById("textData").value;
+
+        const fileInput = document.getElementById("file");
+        const file = fileInput.files[0]; // Get the selected file
+
+        if (!file) {
+            alert("Please select a file.");
+            return;
+        }
+
+        // Create a FormData object and append the Blob data
+        const formData = new FormData();
+        formData.append("textData", textData);
+        formData.append("file", file);
+
+        // You can now send the form data (including the Blob data) to a server using the fetch API
+        fetch("your_server_endpoint_here", {
+            method: "POST",
+            body: formData,
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error("Network response was not ok");
+            }
+            return response.text(); // or response.json() if the server responds with JSON
+        })
+        .then(data => {
+            // Handle the server response here
+            console.log("Server response:", data);
+        })
+        .catch(error => {
+            // Handle errors here
+            console.error("There was a problem with the fetch operation:", error);
+        });
+    });
+});
+```
+
+3. Replace `"your_server_endpoint_here"` with the actual URL where you want to send the form data, including the Blob data. This URL should be the endpoint on your server that handles the form submission.
+
+4. When the user selects a file and submits the form, the JavaScript code will prevent the default form submission, retrieve the text data and Blob data, create a `FormData` object, and then use the `fetch` API to send the data to the specified server endpoint.
+
+5. You can handle the server's response within the `.then()` block and implement any further logic needed.
+
+This example demonstrates how to send a form with Blob data, including a text field and a file input. The server-side implementation should handle both the text data and the Blob data appropriately.
+
+
+FETCH: DOWNLOAD PROGRESS
+
+To track the download progress of a file fetched using the `fetch` API in JavaScript, you can use the `response.body` and the `ReadableStream` interface. You can monitor the progress by reading chunks of data and calculating the total bytes received.
+The fetch method allows to track download progress.
+
+Please note: there’s currently no way for fetch to track upload progress. For that purpose, please use XMLHttpRequest, we’ll cover it later.
+
+To track download progress, we can use response.body property. It’s a “readable stream” – a special object that provides body chunk-by-chunk, as it comes.
+
+Unlike response.text(), response.json() and other methods, response.body gives full control over the reading process, and we can count how much is consumed at any moment.
+The result of await reader.read() call is an object with two properties:
+
+done – true when the reading is complete.
+value – a typed array of bytes: Uint8Array.
+We wait for more chunks in the loop, until done is true.
+
+
+ Here's an example of how to do this:
+
+```javascript
+const url = 'https://example.com/yourfile.zip'; // Replace with the URL of the file you want to download
+
+fetch(url)
+  .then(response => {
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+    
+    // Get the content length from the response headers
+    const contentLength = response.headers.get('content-length');
+    const total = parseInt(contentLength, 10);
+
+    // Initialize variables to track progress
+    let received = 0;
+
+    // Create a new ReadableStream to read the response body
+    const reader = response.body.getReader();
+
+    // Define a function to recursively read chunks of data
+    function readChunk() {
+      reader.read().then(({ done, value }) => {
+        if (done) {
+          // All data has been received
+          console.log('Download complete!');
+        } else {
+          // Update progress
+          received += value.byteLength;
+          const percentage = (received / total) * 100;
+          console.log(`Downloaded ${received} bytes (${percentage.toFixed(2)}%)`);
+
+          // Continue reading the next chunk
+          readChunk();
+        }
+      }).catch(error => {
+        console.error('Error reading data:', error);
+      });
+    }
+
+    // Start reading the chunks
+    readChunk();
+  })
+  .catch(error => {
+    console.error('Fetch error:', error);
+  });
+```
+
+In this example:
+
+1. We initiate a `fetch` request to download the file from the specified URL.
+
+2. We check if the response status is OK. If not, we handle the error accordingly.
+
+3. We retrieve the `content-length` header from the response to determine the total size of the file.
+
+4. We set up variables to keep track of the bytes received and create a `ReadableStream` using `response.body.getReader()`.
+
+5. We define a `readChunk` function that reads a chunk of data from the stream. When a chunk is received, we update the progress and continue reading the next chunk until all data has been received.
+
+6. We start reading the chunks by calling `readChunk()`.
+
+This code will log the progress of the file download as it happens. You can modify it to suit your needs, such as displaying the progress to the user or taking other actions when the download is complete.
+
+
+FETCH: ABORT
+
+You can use the `AbortController` and `AbortSignal` to cancel a fetch request in JavaScript. This allows you to stop a fetch operation before it completes, which can be useful in scenarios where the user decides to cancel the request or in response to some other event. Here's how you can use it:
+
+```javascript
+// Create an AbortController
+const abortController = new AbortController();
+
+// Get the AbortSignal from the AbortController
+const abortSignal = abortController.signal;
+
+// Create a fetch request with the AbortSignal
+const url = 'https://example.com/api/data';
+const options = {
+  method: 'GET',
+  signal: abortSignal,
+};
+
+// Perform the fetch request
+const fetchPromise = fetch(url, options);
+
+// Add an event listener to a cancel button or some other event
+const cancelButton = document.getElementById('cancelButton');
+if (cancelButton) {
+  cancelButton.addEventListener('click', () => {
+    // Call the abort method on the AbortController to cancel the request
+    abortController.abort();
+  });
+}
+
+// Handle the fetch request response
+fetchPromise
+  .then(response => {
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+    return response.json();
+  })
+  .then(data => {
+    // Process the fetched data
+    console.log(data);
+  })
+  .catch(error => {
+    if (error.name === 'AbortError') {
+      console.log('Fetch was aborted by the user or some event.');
+    } else {
+      console.error('Fetch error:', error);
+    }
+  });
+```
+
+In this example:
+
+1. We create an `AbortController` and obtain the associated `AbortSignal` from it.
+
+2. We use the `AbortSignal` by passing it as the `signal` property in the `fetch` options.
+
+3. We start the fetch request, and it will be associated with the `AbortController`.
+
+4. We add an event listener to a cancel button or some other event. When this event is triggered, we call the `abort()` method on the `AbortController`, which cancels the fetch request.
+
+5. We handle the fetch request as usual, but we also handle the potential `AbortError` that may occur if the request is aborted.
+
+By using the `AbortController`, you can gracefully cancel fetch requests, which is particularly useful in scenarios where you want to provide users with the ability to cancel long-running operations or handle specific events that require the request to be stopped.
+
+
+DAY 3
+
+FETCH: CROSS-ORIGIN REQUESTS
+
+If we make a fetch from an arbitrary web-site, that will probably fail.
+
+The core concept here is origin – a domain/port/protocol triplet.
+
+Cross-origin requests – those sent to another domain (even a subdomain) or protocol or port – require special headers from the remote side. That policy is called “CORS”: Cross-Origin Resource Sharing.
+
+For instance, let’s try fetching http://example.com:
+
+try {
+
+  await fetch('http://example.com');
+
+} catch(err) {
+
+  alert(err); // Failed to fetch
+
+}
+
+Fetch fails, as expected.
+
+Why? A brief history
+Because cross-origin restrictions protect the internet from evil hackers.
+
+Seriously. Let’s make a very brief historical digression.
+
+For many years a script from one site could not access the content of another site.
+
+That simple, yet powerful rule was a foundation of internet security. E.g. a script from the page hacker.com could not access the user’s mailbox at gmail.com. People felt safe.
+
+JavaScript also did not have any special methods to perform network requests at that time. It was a toy language to decorate a web page.
+
+But web developers demanded more power. A variety of tricks were invented to work around the limitation.
+
+
+USING FORMS
+
+- Using forms is a fundamental aspect of web development and allows users to input data, which can then be submitted to a server for processing. HTML provides a set of elements and attributes to create forms.
+
+- One way to communicate with another server was to submit a <form> there. People submitted it into <iframe>, just to stay on the current page, like this:
+
+<iframe name="iframe"></iframe>
+<form tagert="iframe" method="POST" action="url">
+</form>
+
+So, it was possible to make a GET/POST request to another site, even without networking methods. But as it’s forbidden to access the content of an <iframe>from another site, it wasn’t possible to read the response.
+
+As we can see, forms allowed to send data anywhere, but not receive the response. To be precise, there were actually tricks for that (required special scripts at both the iframe and the page), but let these dinosaurs rest in peace.
+
+
+SIMPLE REQUEST
+
+There are two types of cross-domain requests:
+
+Simple requests.
+
+All the others.
+
+Simple Requests are, well, simpler to make, so let’s start with them.
+
+A simple request is a request that satisfies two conditions:
+
+Simple method: GET, POST or HEAD
+
+Simple headers – the only allowed custom headers are:
+
+Accept,
+Accept-Language,
+Content-Language,
+Content-Type with the value application/x-www-form-urlencoded, multipart/form-data or text/plain.
+
+Any other request is considered “non-simple”. For instance, a request with PUT method or with an API-Key HTTP-header does not fit the limitations.
+
+The essential difference is that a “simple request” can be made with a <form> or a <script>, without any special methods.
+
+So, even a very old server should be ready to accept a simple request.
+
+Contrary to that, requests with non-standard headers or e.g. method DELETE can’t be created this way. For a long time, JavaScript was unable to do such requests. So an old server may assume that such requests come from a privileged source, “because a webpage is unable to send them”.
+
+When we try to make a non-simple request, the browser sends a special “preflight” request that asks the server – does it agree to accept such cross-origin requests, or not?
+
+And, unless the server explicitly confirms that with headers, a non-simple request is not sent.
+
+Now we’ll go into details. All of them serve a single purpose – to ensure that new cross-origin capabilities are only accessible with explicit permission from the server.
+
+
+CORS FOR SIMPLE REQUESTS
+
+If a request is cross-origin, the browser always adds Origin header to it.
+
+For instance, if we request https://anywhere.com/request from https://javascript.info/page, the headers will be like:
+
+GET /request
+Host: anywhere.com
+Origin: https://javascript.info
+
+As you can see, Origin contains exactly the origin (domain/protocol/port), without a path.
+
+The server can inspect the Origin and, if it agrees to accept such a request, adds a special header Access-Control-Allow-Origin to the response. That header should contain the allowed origin (in our case https://javascript.info), or a star *. Then the response is successful, otherwise an error.
+
+The browser plays the role of a trusted mediator here:
+
+It ensures that the correct Origin is sent with a cross-domain request.
+
+If checks for correct Access-Control-Allow-Origin in the response, if it is so, then JavaScript access, otherwise forbids with an error.
+
+
+**RESPONSE HEADERS**
+
+For cross-origin requests, JavaScript has limitations on which response headers it can access by default. These headers are known as "simple response headers" and include:
+
+1. **Cache-Control**
+2. **Content-Language**
+3. **Content-Type**
+4. **Expires**
+5. **Last-Modified**
+6. **Pragma**
+
+However, there's one notable omission from this list:
+
+- **No Content-Length Header:** JavaScript is not granted access to the `Content-Length` header by default. This header provides the full length of the response content. If you want to track the percentage of progress when downloading something, you need additional permissions to access this header.
+
+To allow JavaScript to access any other response header, the server must explicitly list it in the `Access-Control-Expose-Headers` header. Here's an example:
+
+```http
+HTTP/1.1 200 OK
+Content-Type: text/html; charset=UTF-8
+Content-Length: 12345
+API-Key: 2c9de507f2c54aa1
+Access-Control-Allow-Origin: https://javascript.info
+Access-Control-Expose-Headers: Content-Length, API-Key
+```
+
+In this example, the server is allowing the script running on a page from "https://javascript.info" to access the `Content-Length` and `API-Key` headers of the response because they are listed in the `Access-Control-Expose-Headers` header.
+
+Understanding these rules for response headers is important when working with cross-origin requests in JavaScript, especially when dealing with scenarios like tracking download progress or accessing custom headers.
+
+NON-SIMPLE REQUESTS
+
+Non-simple requests, also known as complex requests, refer to HTTP requests that are more intricate and potentially have a greater impact on the server compared to simple requests. These requests do not meet the criteria for simple requests and often involve HTTP methods other than GET, POST, or HEAD or include certain types of custom headers. Handling non-simple requests involves additional considerations, particularly with regards to Cross-Origin Resource Sharing (CORS).
+
+Here are some key characteristics of non-simple requests:
+
+1. **HTTP Methods:** Non-simple requests often use HTTP methods other than GET, POST, or HEAD. Methods such as PUT, DELETE, PATCH, or custom methods fall into this category.
+
+2. **Custom Headers:** These requests may include custom headers that are not part of the standard set of headers used in simple requests.
+
+3. **Preflight Requests:** Non-simple requests typically trigger preflight requests. Preflight requests are OPTIONS requests sent by the browser to the target server before the actual request. The purpose of the preflight request is to check whether the actual request from the specified origin is permitted by the server.
+
+4. **CORS Configuration:** To handle non-simple requests, the server must be configured to respond to preflight requests and include the appropriate CORS headers in the response. This includes headers like `Access-Control-Allow-Origin`, `Access-Control-Allow-Methods`, and `Access-Control-Allow-Headers`.
+
+5. **Credentials:** If the non-simple request includes credentials, such as cookies or HTTP authentication, the server must be configured to handle credentials by including `Access-Control-Allow-Credentials: true` in the CORS headers.
+
+6. **Error Handling:** Proper error handling is crucial when dealing with non-simple requests, as they can have a more significant impact on the server. Servers should provide informative error responses and handle exceptions gracefully.
+
+Here's an example of a preflight request and a corresponding actual request for a non-simple request:
+
+**Preflight (OPTIONS) Request:**
+
+```http
+OPTIONS /api/resource HTTP/1.1
+Host: example.com
+Origin: https://clientwebsite.com
+Access-Control-Request-Method: PUT
+Access-Control-Request-Headers: X-Custom-Header
+```
+
+**Actual (PUT) Request:**
+
+```http
+PUT /api/resource HTTP/1.1
+Host: example.com
+Origin: https://clientwebsite.com
+Content-Type: application/json
+X-Custom-Header: custom-value
+
+{"data": "updated"}
+```
+
+In this example, the preflight request is sent to check if the PUT request with custom headers is allowed. If the server responds with the appropriate CORS headers, the actual request is sent.
+
+Handling non-simple requests correctly is crucial for securing web applications and ensuring that cross-origin interactions do not pose security risks or unintentional side effects on the server. Servers must be configured to support CORS and respond appropriately to preflight requests.
+
+
+CREDENTIALS
+
+In JavaScript, credentials are typically used in the context of making network requests, particularly when using the Fetch API or XMLHttpRequest to interact with web services or APIs that require authentication. Credentials are used to specify how cookies, HTTP authentication, and other user credentials are included with the request.
+
+There are three possible values for the `credentials` property when making a fetch request:
+
+1. `"same-origin"` (default): This setting sends credentials if the request is made to the same origin as the requesting page. It includes cookies and HTTP authentication headers if applicable.
+
+```javascript
+fetch('https://example.com/api/data', {
+  credentials: 'same-origin',
+  // other options
+})
+```
+
+2. `"include"`: This setting always sends credentials, regardless of the origin. It includes cookies and HTTP authentication headers with the request.
+
+```javascript
+fetch('https://example.com/api/data', {
+  credentials: 'include',
+  // other options
+})
+```
+
+3. `"omit"`: This setting never sends credentials with the request, even if it's a same-origin request.
+
+```javascript
+fetch('https://example.com/api/data', {
+  credentials: 'omit',
+  // other options
+})
+```
+
+These credentials settings are important for security and privacy reasons. By default, JavaScript fetch requests are subject to the same-origin policy, which means that they can only access resources on the same domain unless the server explicitly allows cross-origin requests (using CORS headers). The `credentials` property gives you control over whether to include authentication information with cross-origin requests or not.
+
+Remember to use these options responsibly, especially when dealing with sensitive user data or authentication. Always follow best practices for web security when working with credentials in JavaScript.
+
+
+FETCH API
+
+The Fetch API is a modern JavaScript interface for making network requests (HTTP requests) in web applications. It provides a more powerful and flexible way to interact with web resources compared to the older XMLHttpRequest.
+
+Here's an overview of how to use the Fetch API:
+
+1. **Making a Simple GET Request:**
+
+   ```javascript
+   fetch('https://api.example.com/data')
+     .then(response => {
+       if (!response.ok) {
+         throw new Error('Network response was not ok');
+       }
+       return response.json(); // Parse the response body as JSON
+     })
+     .then(data => {
+       // Use the data from the response
+       console.log(data);
+     })
+     .catch(error => {
+       // Handle errors
+       console.error('Fetch error:', error);
+     });
+   ```
+
+   In this example, we use `fetch` to send a GET request to a URL. It returns a Promise that resolves to the Response object. We check if the response is OK (status code 200-299) and then parse the response body as JSON.
+
+2. **Making Other Types of Requests (POST, PUT, DELETE, etc.):**
+
+   You can specify the HTTP method and include request headers and a request body as needed when making non-GET requests:
+
+   ```javascript
+   fetch('https://api.example.com/resource', {
+     method: 'POST', // or 'PUT', 'DELETE', etc.
+     headers: {
+       'Content-Type': 'application/json',
+       // Other headers as needed
+     },
+     body: JSON.stringify({ key: 'value' }) // Request body data
+   })
+     .then(/* Handle the response as before */)
+     .catch(/* Handle errors */);
+   ```
+
+3. **Handling Responses:**
+
+   You can use methods like `json()`, `text()`, or `blob()` on the Response object to parse the response body in different formats:
+
+   ```javascript
+   fetch('https://api.example.com/text')
+     .then(response => response.text()) // Parse response as text
+     .then(text => {
+       console.log(text);
+     });
+   ```
+
+4. **Handling Errors:**
+
+   Use `.catch()` to handle any network errors or exceptions that occur during the fetch operation.
+
+5. **Advanced Configuration:**
+
+   Fetch allows you to configure various options, such as setting request headers, specifying credentials, and more. You can include these options in the second argument to `fetch`.
+
+6. **Async/Await Syntax:**
+
+   You can use `async` and `await` to write asynchronous code that looks more synchronous:
+
+   ```javascript
+   async function fetchData() {
+     try {
+       const response = await fetch('https://api.example.com/data');
+       if (!response.ok) {
+         throw new Error('Network response was not ok');
+       }
+       const data = await response.json();
+       console.log(data);
+     } catch (error) {
+       console.error('Fetch error:', error);
+     }
+   }
+   ```
+
+The Fetch API provides a more modern and consistent way to perform network operations in JavaScript, making it easier to work with data from APIs and other web resources.
+
+
+DAY 4
+
+PATTERN AND FLAGS
+
+In JavaScript, when working with regular expressions (regex), you can define patterns and use flags to modify how the regular expression is matched. Regular expressions are used to search, match, and manipulate text based on patterns. Here's an overview of patterns and flags in JavaScript regular expressions:
+
+1. **Pattern:**
+   - A pattern is a sequence of characters that defines a search pattern.
+   - Patterns are enclosed in forward slashes (`/`) in JavaScript, like `/pattern/`.
+   - For example, `/abc/` is a pattern that matches the string "abc" anywhere in the text.
+
+2. **Flags:**
+   - Flags are optional parameters that can be added after the closing slash of a regular expression pattern to modify its behavior.
+   - Flags are single-character strings and are case-insensitive.
+   - The most commonly used flags are:
+     - `i` (Case-Insensitive): Matches both uppercase and lowercase letters.
+     - `g` (Global): Searches for all occurrences of the pattern in the input string, not just the first one.
+     - `m` (Multiline): Matches the pattern against each line of a multiline input string.
+     - `u` (Unicode): Enables full Unicode matching, particularly important when working with non-ASCII characters.
+     - `s` (Dot-All): Allows the dot (`.`) in the pattern to match newline characters (`\n`).
+   
+   Example with flags:
+   - `/pattern/i` matches "Pattern," "pattern," "PaTtErN," etc., in a case-insensitive manner.
+   - `/pattern/g` matches all occurrences of "pattern" in a string, not just the first one.
+
+Here are some examples of using regular expressions with patterns and flags:
+
+```javascript
+const text = 'This is a sample text with some sample words. Sample!';
+
+// Using the 'i' flag for case-insensitive matching
+const pattern = /sample/i;
+console.log(text.match(pattern)); // ["sample", "Sample", "Sample"]
+
+// Using the 'g' flag for global matching
+const globalPattern = /sample/g;
+console.log(text.match(globalPattern)); // ["sample", "sample", "sample"]
+
+// Using the 'm' flag for multiline matching
+const multilineText = 'Line 1\nLine 2\nLine 3';
+const multilinePattern = /^Line \d/gm;
+console.log(multilineText.match(multilinePattern)); // ["Line 1", "Line 2", "Line 3"]
+```
+
+In addition to these basic flags, you can combine flags as needed to achieve specific matching behavior for your regular expressions. Regular expressions are a powerful tool for pattern matching and text manipulation in JavaScript.
+
+
+USAGE
+
+**Searching Inside a String Using `search` Method**
+
+To search inside a string in JavaScript, you can use the `search` method. The `search` method looks for a specified pattern inside a string and returns the position (index) of the first occurrence of the pattern. Here's an example:
+
+```javascript
+let str = "I love JavaScript!"; // The string to search in
+let regexp = /love/; // The pattern to search for
+
+alert(str.search(regexp)); // This will display 2 because "love" starts at position 2 in the string.
+```
+
+In this example, `str.search(regexp)` searches for the pattern `/love/` inside the string `str` and returns the index `2`, which is the starting position of the first occurrence of "love" in the string.
+
+You can also perform a simple substring search using the `search` method by passing a string instead of a regular expression:
+
+```javascript
+let str = "I love JavaScript!";
+let substr = 'love';
+
+alert(str.search(substr)); // This will also display 2.
+```
+
+Searching for `/love/` using a regular expression is functionally equivalent to searching for the string "love."
+
+**Using `new RegExp` for Dynamic Patterns**
+
+While the short syntax `/.../` is commonly used for regular expressions, it doesn't support variable insertions like `${...}`. To construct a regular expression pattern dynamically from a string, you can use the `new RegExp` constructor, which provides more flexibility. Here's an example:
+
+```javascript
+let tag = prompt("Which tag do you want to search?", "h2"); // Prompt for a tag name
+let regexp = new RegExp(`<${tag}>`); // Create a dynamic regular expression
+
+// This will search for the dynamically generated <h2> tag in the string
+alert("<h1> <h2> <h3>".search(regexp));
+```
+
+In this example, the `new RegExp` constructor is used to create a regular expression pattern dynamically based on user input. The resulting regular expression searches for the specified HTML tag, such as `<h2>`, within the string "<h1> <h2> <h3>". The `search` method then returns the index of the first occurrence of the tag in the string.
+
+Remember that using `new RegExp` allows you to construct regular expressions with patterns generated at runtime, making it more versatile for certain use cases.
+
+
+FLAGS
+
+Regular expressions may have flags that affect the search.
+
+There are only 6 of them in JavaScript:
+
+i
+With this flag the search is case-insensitive: no difference between A and a (see the example below).
+
+g
+With this flag the search looks for all matches, without it – only the first one 
+
+m
+Multiline mode (covered in the chapter Multiline mode, flag "m").
+
+s
+“Dotall” mode, allows . to match newlines (covered in the chapter Character classes).
+
+u
+Enables full unicode support. The flag enables correct processing of surrogate pairs. More about that in the chapter  Unicode: flag "u".
+
+y
+Sticky mode (covered in the chapter Sticky flag "y", searching at position)
+
+We’ll cover all these flags further in the tutorial.
+
+For now, the simplest flag is i, here’s an example:
+
+let str = "I love JavaScript!";
+
+alert( str.search(/LOVE/i) ); // 2 (found lowercased)
+
+alert( str.search(/LOVE/) ); // -1 (nothing found without 'i' flag)
+
+So the i flag already makes regular expressions more powerful than a simple substring search. But there’s so much more. W
+
+
+METHODS OF REGEX AND STRING
+
+**Summary: Methods for Regular Expressions and Strings in JavaScript**
+
+In JavaScript, there are two sets of methods for working with regular expressions and strings. The methods provided by the `RegExp` class deal with regular expressions, while methods available on regular strings can work with regex patterns.
+
+Here are some key methods and their common use cases:
+
+**To Search for All Matches:**
+- Use the `g` flag in a regular expression.
+- Get a flat array of matches using `str.match(reg)`.
+- Get an array of matches with details using `str.matchAll(reg)`.
+
+**To Search for the First Match Only:**
+- Use `str.match(reg)` without the `g` flag to get the full first match.
+- Use `str.search(reg)` to get the string position of the first match.
+- Use `regexp.test(str)` to check if there's a match.
+- Use `regexp.exec(str)` to find the match from a given position by setting `regexp.lastIndex` accordingly.
+
+**To Replace All Matches:**
+- Use `str.replace(reg, replacement)` to replace all matches with another string or a function result.
+
+**To Split the String by a Separator:**
+- Use `str.split(separator)` with either a string or a regex pattern as the separator.
+
+**Using `new RegExp` for Dynamic Patterns:**
+- When you need to construct a pattern dynamically from a string, use `new RegExp(patternString)` to create a regular expression object.
+
+**Advanced Replacement with Functions:**
+- You can use a function as the second argument in `str.replace(reg, func)` for more complex replacements, where the function receives information about the match and can return a replacement string.
+
+**Regular Expression Searching with `exec` and `test`:**
+- `regexp.exec(str)` is a versatile method that returns the first match and can be used to find all matches by adjusting `regexp.lastIndex`.
+- `regexp.test(str)` checks if there's a match in the string and advances `regexp.lastIndex` for global regex patterns.
+
+**Important Note:**
+- Be cautious when using global regex patterns with multiple calls to `test` or `exec`, as the `lastIndex` property can affect subsequent searches. Reset `lastIndex` to `0` before performing a new search.
+
+Regular expressions and string methods provide powerful tools for searching, matching, and manipulating text in JavaScript, making it possible to handle a wide range of text processing tasks.
+
+
+CHARACTER CLASSES
+
+Consider a practical task – we have a phone number "+7(903)-123-45-67", and we need to turn it into pure numbers: 79035419441.
+
+To do so, we can find and remove anything that’s not a number. Character classes can help with that.
+
+A character class is a special notation that matches any symbol from a certain set.
+
+For the start, let’s explore a “digit” class. It’s written as \d. We put it in the pattern, that means “any single digit”.
+
+For instance, the let’s find the first digit in the phone number:
+
+let str = "+7(903)-123-45-67";
+
+let reg = /\d/;
+
+alert( str.match(reg) ); // 7
+
+Without the flag g, the regular expression only looks for the first match, that is the first digit \d.
+
+Let’s add the g flag to find all digits:
+
+let str = "+7(903)-123-45-67";
+
+let reg = /\d/g;
+
+alert( str.match(reg) ); // array of matches: 7,9,0,3,1,2,3,4,5,6,7
+
+alert( str.match(reg).join('') ); // 79035419441
+
+That was a character class for digits. There are other character classes as well.
+
+Most used are:
+
+\d (“d” is from “digit”)
+
+A digit: a character from 0 to 9.
+
+\s (“s” is from “space”)
+
+A space symbol: that includes spaces, tabs, newlines.
+
+\w (“w” is from “word”)
+
+A “wordly” character: either a letter of English alphabet or a digit or an underscore. Non-Latin letters (like cyrillic or hindi) do not belong to \w.
+
+For instance, \d\s\w means a “digit” followed by a “space character” followed by a “wordly character”, like "1 a".
+
+A regexp may contain both regular symbols and character classes.
+
+For instance, CSS\d matches a string CSS with a digit after it:
+
+let str = "CSS4 is cool";
+
+let reg = /CSS\d/
+
+alert( str.match(reg) ); // CSS4
+
+Also we can use many character classes:
+
+alert( "I love HTML5!".match(/\s\w\w\w\w\d/) ); // ' HTML5'
+
+The match (each character class corresponds to one result character):
+
+I love html5
+
+
+WORD BOUNDARY \b
+
+A word boundary \b – is a special character class.
+
+It does not denote a character, but rather a boundary between characters.
+
+For instance, \bJava\b matches Java in the string Hello, Java!, but not in the script Hello, JavaScript!.
+
+alert( "Hello, Java!".match(/\bJava\b/) ); // Java
+
+alert( "Hello, JavaScript!".match(/\bJava\b/) ); // null
+
+The boundary has “zero width” in a sense that usually a character class means a character in the result (like a wordly character or a digit), but not in this case.
+
+The boundary is a test.
+
+When regular expression engine is doing the search, it’s moving along the string in an attempt to find the match. At each string position it tries to find the pattern.
+
+When the pattern contains \b, it tests that the position in string is a word boundary, that is one of three variants:
+
+Immediately before is \w, and immediately after – not \w, or vise versa.
+At string start, and the first string character is \w.
+At string end, and the last string character is \w.
+For instance, in the string Hello, Java! the following positions match \b:
+
+So it matches \bHello\b, because:
+
+At the beginning of the string the first \b test matches.
+Then the word Hello matches.
+Then \b matches, as we’re between o and a space.
+Pattern \bJava\b also matches. But not \bHell\b (because there’s no word boundary after l) and not Java!\b (because the exclamation sign is not a wordly character, so there’s no word boundary after it).
+
+alert( "Hello, Java!".match(/\bHello\b/) ); // Hello
+alert( "Hello, Java!".match(/\bJava\b/) );  // Java
+alert( "Hello, Java!".match(/\bHell\b/) );  // null (no match)
+alert( "Hello, Java!".match(/\bJava!\b/) ); // null (no match)
+Once again let’s note that \b makes the searching engine to test for the boundary, so that Java\b finds Java only when followed by a word boundary, but it does not add a letter to the result.
+
+Usually we use \b to find standalone English words. So that if we want "Java" language then \bJava\b finds exactly a standalone word and ignores it when it’s a part of another word, e.g. it won’t match Java in JavaScript.
+
+Another example: a regexp \b\d\d\b looks for standalone two-digit numbers. In other words, it requires that before and after \d\d must be a symbol different from \w (or beginning/end of the string).
+
+alert( "1 23 456 78".match(/\b\d\d\b/g) ); // 23,78
+
+Word boundary doesn’t work for non-Latin alphabets
+
+The word boundary check \b tests for a boundary between \w and something else. But \w means an English letter (or a digit or an underscore), so the test won’t work for other characters (like cyrillic or hieroglyphs).
+
+Later we’ll come by Unicode character classes that allow to solve the similar task for different languages.
+
+
+INVERSE CLASSES
+
+Inverse classes in regular expressions, also known as negated character classes or negated sets, are used to match any character except those specified within the class. In a regular character class, you enclose a set of characters within square brackets (`[]`). An inverse class is denoted by using a caret (`^`) as the first character inside the square brackets. Here's how you use inverse classes in regular expressions:
+
+1. **Basic Inverse Character Class:**
+   - `[^abc]`: Matches any character that is not 'a', 'b', or 'c'.
+   - `[^0-9]`: Matches any character that is not a digit.
+
+2. **Inverse Character Class with Other Characters:**
+   - `[^\d]`: Matches any character that is not a digit (equivalent to `[^0-9]`).
+   - `[^A-Za-z]`: Matches any character that is not an uppercase or lowercase letter.
+   - `[^a-zA-Z0-9]`: Matches any character that is not an alphanumeric character.
+
+3. **Inverse Class with Special Characters:**
+   - `[^a-zA-Z0-9_]`: Matches any character that is not an alphanumeric character or an underscore.
+   - `[^.!?]`: Matches any character that is not a period, exclamation mark, or question mark.
+
+4. **Negating a Character Class Within a Larger Pattern:**
+   - You can use inverse character classes within a larger regular expression pattern. For example, to find all words that do not contain the letter 'x':
+     - `\b[^x]+\b`: Matches whole words that don't contain the letter 'x'.
+
+Inverse character classes are handy when you want to match everything except a specific set of characters or patterns. They allow you to specify what should not be present in the text you're trying to match.
+
+For every character class there exists an “inverse class”, denoted with the same letter, but uppercased.
+
+The “reverse” means that it matches all other characters, for instance:
+
+\D
+Non-digit: any character except \d, for instance a letter.
+
+\S
+Non-space: any character except \s, for instance a letter.
+
+\W
+Non-wordly character: anything but \w.
+
+\B
+Non-boundary: a test reverse to \b.
+
+In the beginning of the chapter we saw how to get all digits from the phone +7(903)-123-45-67.
+
+One way was to match all digits and join them:
+
+let str = "+7(903)-123-45-67";
+
+alert( str.match(/\d/g).join('') ); // 79031234567
+
+An alternative, shorter way is to find non-digits \D and remove them from the string:
+
+let str = "+7(903)-123-45-67";
+
+alert( str.replace(/\D/g, "") ); // 79031234567
+
+
+SPACES ARE REGULAR CHARACTERS
+
+In regular expressions, spaces are indeed treated as regular characters by default. This means that a space character in a regular expression will match a space character in the input text. There is no special meaning associated with space characters in regular expressions, unlike some other characters like `.` (matches any character) or `*` (matches zero or more occurrences).
+
+For example, if you have the regular expression pattern `/hello world/`, it will specifically look for the exact sequence "hello world" in the input text, including the space character.
+
+Here's an example of how spaces are treated as regular characters in a regular expression:
+
+```javascript
+const text = "Hello world, how are you?";
+const pattern = /Hello world/; // Matches the exact sequence "Hello world"
+
+if (pattern.test(text)) {
+  console.log("Pattern matched!");
+} else {
+  console.log("Pattern not found.");
+}
+```
+
+In this example, the regular expression `/Hello world/` matches "Hello world" in the input text, including the space character.
+
+If you want to match any whitespace character (including spaces, tabs, and line breaks), you can use the special character class `\s` in your regular expression, like `/Hello\sworld/`. This would match "Hello world" with any kind of whitespace (spaces, tabs, or line breaks) between "Hello" and "world."
+
+Usually we pay little attention to spaces. For us strings 1-5 and 1 - 5 are nearly identical.
+But if a regexp doesn’t take spaces into account, it may fail to work.
+Let’s try to find digits separated by a dash:
+alert( "1 - 5".match(/\d-\d/) ); // null, no match!
+Here we fix it by adding spaces into the regexp \d - \d:
+alert( "1 - 5".match(/\d - \d/) ); // 1 - 5, now it works
+A space is a character. Equal in importance with any other character.
+Of course, spaces in a regexp are needed only if we look for them. Extra spaces (just like any other extra characters) may prevent a match:
+alert( "1-5".match(/\d - \d/) ); // null, because the string 1-5 has no spaces
+In other words, in a regular expression all characters matter, spaces too.
+
+A DOT IS ANY CHARACTER
+
+Usually we pay little attention to spaces. For us strings 1-5 and 1 - 5 are nearly identical.
+But if a regexp doesn’t take spaces into account, it may fail to work.
+Let’s try to find digits separated by a dash:
+alert( "1 - 5".match(/\d-\d/) ); // null, no match!
+Here we fix it by adding spaces into the regexp \d - \d:
+alert( "1 - 5".match(/\d - \d/) ); // 1 - 5, now it works
+A space is a character. Equal in importance with any other character.
+Of course, spaces in a regexp are needed only if we look for them. Extra spaces (just like any other extra characters) may prevent a match:
+alert( "1-5".match(/\d - \d/) ); // null, because the string 1-5 has no spaces
+In other words, in a regular expression all characters matter, spaces too.
+
+
+THE DOTALL "S" FLAG
+
+Usually a dot doesn’t match a newline character.
+
+For instance, A.B matches A, and then B with any character between them, except a newline.
+
+This doesn’t match:
+
+alert( "A\nB".match(/A.B/) ); // null (no match)
+
+// a space character would match, or a letter, but not \n
+
+Sometimes it’s inconvenient, we really want “any character”, newline included.
+
+That’s what s flag does. If a regexp has it, then the dot "." match literally any character:
+
+alert( "A\nB".match(/A.B/s) ); // A\nB (match!)
+
+There exist following character classes:
+
+\d – digits.
+\D – non-digits.
+\s – space symbols, tabs, newlines.
+\S – all but \s.
+\w – English letters, digits, underscore '_'.
+\W – all but \w.
+any character if with the regexp 's' flag, otherwise any except a newline.
+
+…But that’s not all! 
+
+The Unicode encoding, used by JavaScript for strings, provides many properties for characters, like: which language the letter belongs to (if a letter) it is it a punctuation sign, etc.
+
+Modern JavaScript allows to use these properties in regexps to look for characters, for instance:
+
+A cyrillic letter is: \p{Script=Cyrillic} or \p{sc=Cyrillic}.
+A dash (be it a small hyphen - or a long dash —): \p{Dash_Punctuation} or \p{pd}.
+A currency symbol, such as $, € or another: \p{Currency_Symbol} or \p{sc}.
+…And much more. Unicode has a lot of character categories that we can select from.
+
+
+FIND THE TIME
+
+const text = "Breakfast at 09:00 in the room 123:456.";
+const timeRegex = /\b\d{2}:\d{2}\b/g; // Using the 'g' flag to find all matches
+
+const matches = text.match(timeRegex);
+
+if (matches) {
+  console.log("Times found in the text:");
+  matches.forEach(match => {
+    console.log(match);
+  });
+} else {
+  console.log("No times found in the text.");
+}
+
+
+ESCAPING SPECIAL CHARACTERS
+
+As we’ve seen, a backslash "\" is used to denote character classes. So it’s a special character in regexps (just like in a regular string).
+
+There are other special characters as well, that have special meaning in a regexp. They are used to do more powerful searches. Here’s a full list of them: [ \ ^ $ . | ? * + ( ).
+
+Don’t try to remember the list – soon we’ll deal with each of them separately and you’ll know them by heart automatically.
+
+Escaping
+Let’s say we want to find a dot literally. Not “any character”, but just a dot.
+
+To use a special character as a regular one, prepend it with a backslash: \..
+
+That’s also called “escaping a character”.
+
+For example:
+
+alert( "Chapter 5.1".match(/\d\.\d/) ); // 5.1 (match!)
+alert( "Chapter 511".match(/\d\.\d/) ); // null (looking for a real dot \.)
+
+Parentheses are also special characters, so if we want them, we should use \(. The example below looks for a string "g()":
+
+alert( "function g()".match(/g/) ); // "g()"
+
+If we’re looking for a backslash \, it’s a special character in both regular strings and regexps, so we should double it.
+
+alert( "1\\2".match(/\\/) ); // '\'
+
+A slash
+
+A slash symbol '/' is not a special character, but in JavaScript it is used to open and close the regexp: /...pattern.../, so we should escape it too.
+
+Here’s what a search for a slash '/' looks like:
+
+alert( "/".match(/\//) ); // '/'
+
+On the other hand, if we’re not using /.../, but create a regexp using new RegExp, then we don’t need to escape it:
+
+alert( "/".match(new RegExp("/")) ); // '/'
+
+new RegExp
+
+If we are creating a regular expression with new RegExp, then we don’t have to escape /, but need to do some other escaping.
+
+For instance, consider this:
+
+let reg = new RegExp("\d\.\d");
+
+alert( "Chapter 5.1".match(reg) ); // null
+
+The search worked with /\d\.\d/, but with new RegExp("\d\.\d") it doesn’t work, why?
+
+The reason is that backslashes are “consumed” by a string. Remember, regular strings have their own special characters like \n, and a backslash is used for escaping.
+
+Please, take a look, what “\d.\d” really is:
+
+alert("\d\.\d"); // d.d 
+
+The quotes “consume” backslashes and interpret them, for instance:
+
+\n – becomes a newline character,
+\u1234 – becomes the Unicode character with such code,
+…And when there’s no special meaning: like \d or \z, then the backslash is simply removed.
+So the call to new RegExp gets a string without backslashes. That’s why the search doesn’t work!
+
+To fix it, we need to double backslashes, because quotes turn \\ into \:
+
+let regStr = "\\d\\.\\d";
+alert(regStr); // \d\.\d (correct now)
+let reg = new RegExp(regStr);
+alert( "Chapter 5.1".match(reg) ); // 5.1
+
+Summary
+
+To search special characters [ \ ^ $ . | ? * + ( ) literally, we need to prepend them with \ (“escape them”).
+We also need to escape / if we’re inside /.../ (but not inside new RegExp).
+When passing a string new RegExp, we need to double backslashes \\, cause strings consume one of them.
+
+
+DAY 5
+
+- Started my day by updating my GITHUB
+- Preperation for the sprinter that is happening today
+- We did our sprinter, the groups were presenting on what we have covered on the last 2 weeks.
+- I got busy with my portfolio
+
+
