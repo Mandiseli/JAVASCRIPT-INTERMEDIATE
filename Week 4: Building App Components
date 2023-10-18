@@ -1,0 +1,751 @@
+INSTALLING AND BUILDING APP
+
+React Native is an open-source framework for building mobile applications. It was created by Facebook and allows developers to build mobile apps for iOS and Android using JavaScript and React, a popular JavaScript library for building user interfaces. React Native is a popular choice for mobile app development because it offers several advantages:
+
+1. **Cross-Platform Development:** With React Native, you can write code once and use it to create apps for both iOS and Android. This approach can significantly reduce development time and costs.
+
+2. **Native Performance:** React Native bridges the gap between JavaScript and the native components of the mobile platform, allowing for near-native performance. This is achieved by running JavaScript code on a separate thread and communicating with the native components through a bridge.
+
+3. **Reusable Components:** React Native allows you to create reusable components that can be shared between different parts of your application, making it easier to maintain and update your codebase.
+
+4. **Hot Reloading:** Developers can see the result of code changes in real-time without recompiling the entire app. This speeds up the development process and makes it easier to test and iterate on your app.
+
+5. **Large Community and Ecosystem:** React Native has a large and active community, which means there are many open-source libraries and resources available to help you build your app.
+
+6. **Ease of Learning:** If you're already familiar with JavaScript and React, the learning curve for React Native is relatively shallow, making it accessible to a wide range of developers.
+
+While React Native offers many advantages, it may not be the best choice for every mobile app project. In some cases, particularly when you need deep integration with specific platform features or require the highest level of performance, native development in Swift (for iOS) or Kotlin (for Android) might be a better choice. However, for many apps, React Native provides a balance between development speed and performance that makes it a compelling option.
+Daily Notes - Activity 1 - Installing dependencies
+ INSTALLING DEPENDENCIES
+
+To install dependencies for a React Native project, you typically use a package manager like npm (Node Package Manager) or Yarn. Here's a step-by-step guide on how to install dependencies for a React Native project:
+
+1. **Create a React Native Project** (if you haven't already):
+
+If you don't have an existing React Native project, you can create one using the following command:
+
+```bash
+npx react-native init YourProjectName
+```
+
+Replace `YourProjectName` with the name of your project.
+
+2. **Navigate to Your Project Directory**:
+
+Change your working directory to the newly created project folder:
+
+```bash
+cd YourProjectName
+```
+
+3. **Install Dependencies**:
+
+Use your preferred package manager to install the project dependencies. You can choose between npm and Yarn. Here are the commands for both:
+
+Using npm:
+
+```bash
+npm install
+```
+
+Using Yarn:
+
+```bash
+yarn install
+```
+
+This will read the dependencies from your project's `package.json` file and install them. If you want to add a specific dependency, you can use the `npm install` or `yarn add` command followed by the package name, for example:
+
+Using npm:
+
+```bash
+npm install package-name
+```
+
+Using Yarn:
+
+```bash
+yarn add package-name
+```
+
+4. **Link Native Modules (if necessary)**:
+
+Some React Native libraries and dependencies require manual linking of native modules. You can use the following command to link these modules:
+
+```bash
+npx react-native link
+```
+
+However, React Native has improved automatic linking for many packages, so manual linking is less common in recent versions.
+
+5. **Start Your Project**:
+
+To start your React Native development server, use the following command:
+
+```bash
+npx react-native start
+```
+
+And to run your app on an emulator or physical device, use one of the following commands, depending on the platform you want to target:
+
+For iOS:
+
+```bash
+npx react-native run-ios
+```
+
+For Android:
+
+```bash
+npx react-native run-android
+```
+
+These commands will build your app and deploy it to a running emulator or device.
+
+Remember to consult the official React Native documentation and the documentation of specific packages you intend to use for any special installation instructions or potential issues. Also, ensure you have Node.js and the necessary development tools set up on your system before working with React Native.
+Daily Notes -Activity 2 - Setting up the Server
+ Setting up the server
+
+Setting up a server for a Node.js application, such as a web server or an API server, involves several steps. Below is a general guide on how to set up a basic server using Node.js and the Express.js framework. Express.js is a popular choice for building web servers in Node.js.
+
+1. **Initialize Your Project**:
+
+If you haven't already, create a new directory for your project, navigate to it in your terminal, and initialize a new Node.js project using npm (Node Package Manager) or yarn:
+
+Using npm:
+```bash
+npm init
+```
+
+Using yarn:
+```bash
+yarn init
+```
+
+Follow the prompts to set up your project, or you can use the `-y` flag to accept the default settings.
+
+2. **Install Required Dependencies**:
+
+For setting up a basic server with Express.js, you'll need to install Express. You can do this by running:
+
+Using npm:
+```bash
+npm install express
+```
+
+Using yarn:
+```bash
+yarn add express
+```
+
+3. **Create a Server Script**:
+
+In your project directory, create a JavaScript file (e.g., `server.js`) that will define your server. You can use a code editor of your choice to create this file. Here's a basic example of a server script using Express:
+
+```javascript
+const express = require('express');
+const app = express();
+const port = process.env.PORT || 3000; // Use the specified port or default to 3000
+
+// Define a basic route
+app.get('/', (req, res) => {
+res.send('Hello, World!');
+});
+
+// Start the server
+app.listen(port, () => {
+console.log(`Server is running on port ${port}`);
+});
+```
+
+4. **Start the Server**:
+
+You can start your server by running the server script you just created:
+
+```bash
+node server.js
+```
+
+This will start your server on the specified port (or port 3000 if none is specified). You can access your server by opening a web browser and navigating to `http://localhost:3000` or the specified port.
+
+5. **Test Your Server**:
+
+Open a web browser and access `http://localhost:3000` (or the specified port) to verify that your server is running. You should see "Hello, World!" displayed in the browser.
+
+That's a basic setup for a Node.js server using Express. From here, you can expand your server by defining more routes, handling requests and responses, and integrating with databases and other services as needed for your specific application.
+Daily Notes - Activity 3 - Modifying npm scripts
+ MODIFYING NPM SCRIPTS
+
+Modifying npm scripts in your `package.json` file is a common practice to define and manage various tasks and commands related to your Node.js project. Here's how you can modify npm scripts:
+
+1. **Open `package.json`**:
+
+Open your project's `package.json` file in a text editor. It should be located in the root directory of your project.
+
+2. **Locate the `scripts` Section**:
+
+Inside `package.json`, you'll find a `scripts` section where you can define custom npm scripts. Here's an example of how it looks:
+
+```json
+"scripts": {
+"start": "node server.js",
+"test": "jest",
+"build": "webpack",
+"custom-script": "your-custom-command"
+}
+```
+
+In this example, `"start"`, `"test"`, `"build"`, and `"custom-script"` are npm scripts.
+
+3. **Edit or Add Scripts**:
+
+You can edit existing scripts or add new ones according to your project's requirements. To define or modify a script, you specify a script name as the key and the command to run as the value.
+
+For example, to modify an existing script or add a new one, you can do something like this:
+
+```json
+"scripts": {
+"start": "node app.js",
+"test": "jest",
+"build": "webpack",
+"custom-script": "your-custom-command",
+"lint": "eslint .",
+"dev": "nodemon server.js"
+}
+```
+
+In this example, we modified the `"start"`, `"lint"`, and `"dev"` scripts and added new ones: `"lint"` for running ESLint on your code and `"dev"` for starting your server using Nodemon.
+
+4. **Run the Modified Scripts**:
+
+After you've modified or added scripts, you can run them using npm or yarn in your terminal.
+
+- To run a script named `"lint"`, you can use:
+
+Using npm:
+```bash
+npm run lint
+```
+
+Using yarn:
+```bash
+yarn lint
+```
+
+- To run a custom script named `"dev"`, you can use:
+
+Using npm:
+```bash
+npm run dev
+```
+
+Using yarn:
+```bash
+yarn dev
+```
+
+This allows you to execute various commands, such as starting your server, running tests, or performing linting tasks, by simply using npm or yarn scripts.
+
+Modifying npm scripts in your `package.json` provides a convenient way to manage and execute common tasks in your Node.js project. You can customize your scripts to match the specific requirements of your project.
+My Views on the Day
+ My Views of the day
+
+- The most important feature of the day was learning about React Native and installing the dependencies
+
+- All the activities were beneficial.
+
+- None of the activities were easy.
+
+- All the activities needed more time.
+Daily Notes - Day 1 Reflections
+ DAY 1 REFLECTIONS
+INSTALLING AND BUILDING APP
+
+- Introduction to day 1
+- What is react active
+- Installing Dependences
+- Setting up the server
+- Modifying npm scripts
+
+
+DAY 2 - BUILDING THE INDEX PAGE
+
+Think and Reflect
+
+React Native is an open-source framework for building mobile applications. It was created by Facebook and is used to develop natively rendered applications for mobile platforms like iOS and Android using JavaScript and React. Here are some key points about React Native:
+
+1. **Cross-Platform Development**: React Native enables developers to build mobile applications that work on both iOS and Android using a single codebase. This is achieved by sharing most of the code logic while allowing platform-specific customization when necessary.
+
+2. **Native Components**: React Native components are mapped to native components, which means that your app will have a native look and feel. React Native leverages the power of native platforms to provide a high-quality user experience.
+
+3. **Performance**: React Native apps offer good performance because they run on the device's native code. React Native also includes tools like "TurboModules" to optimize bridge communication between JavaScript and native code.
+
+4. **Hot Reloading**: React Native supports hot reloading, which allows developers to see the immediate effects of code changes during development without the need to rebuild the entire application. This speeds up the development process.
+
+5. **Large Ecosystem**: React Native has a vast and active community. There are numerous open-source libraries and packages available, making it easy to extend the functionality of your mobile app.
+
+6. **React-Based**: React Native is built on top of React, a popular JavaScript library for building user interfaces. If you're already familiar with React, you'll find it relatively easy to transition to React Native.
+
+7. **Responsive Design**: React Native's layout and styling system make it straightforward to create responsive designs that adapt to different screen sizes and orientations.
+
+8. **Support for Native Modules**: If you need to access platform-specific features or APIs not covered by React Native's core components, you can write custom native modules in Swift, Java, or Objective-C and expose them to your JavaScript code.
+
+9. **Community and Third-Party Plugins**: The React Native community provides a wide range of third-party plugins, libraries, and extensions to add additional functionality to your app.
+
+10. **Debugging Tools**: React Native comes with debugging tools that help developers identify and resolve issues in their applications.
+
+React Native is a popular choice for mobile app development, particularly when you want to maintain a single codebase for both iOS and Android platforms and leverage your JavaScript and React skills. It's widely used by companies and developers to create mobile apps with a native look and feel.
+Daily Notes - More about React Native
+ React Native is an open-source framework for building mobile applications. It was created by Facebook and is used to develop natively rendered applications for mobile platforms like iOS and Android using JavaScript and React. Here are some key points about React Native:
+
+1. **Cross-Platform Development**: React Native enables developers to build mobile applications that work on both iOS and Android using a single codebase. This is achieved by sharing most of the code logic while allowing platform-specific customization when necessary.
+
+2. **Native Components**: React Native components are mapped to native components, which means that your app will have a native look and feel. React Native leverages the power of native platforms to provide a high-quality user experience.
+
+3. **Performance**: React Native apps offer good performance because they run on the device's native code. React Native also includes tools like "TurboModules" to optimize bridge communication between JavaScript and native code.
+
+4. **Hot Reloading**: React Native supports hot reloading, which allows developers to see the immediate effects of code changes during development without the need to rebuild the entire application. This speeds up the development process.
+
+5. **Large Ecosystem**: React Native has a vast and active community. There are numerous open-source libraries and packages available, making it easy to extend the functionality of your mobile app.
+
+6. **React-Based**: React Native is built on top of React, a popular JavaScript library for building user interfaces. If you're already familiar with React, you'll find it relatively easy to transition to React Native.
+
+7. **Responsive Design**: React Native's layout and styling system make it straightforward to create responsive designs that adapt to different screen sizes and orientations.
+
+8. **Support for Native Modules**: If you need to access platform-specific features or APIs not covered by React Native's core components, you can write custom native modules in Swift, Java, or Objective-C and expose them to your JavaScript code.
+
+9. **Community and Third-Party Plugins**: The React Native community provides a wide range of third-party plugins, libraries, and extensions to add additional functionality to your app.
+
+10. **Debugging Tools**: React Native comes with debugging tools that help developers identify and resolve issues in their applications.
+
+React Native is a popular choice for mobile app development, particularly when you want to maintain a single codebase for both iOS and Android platforms and leverage your JavaScript and React skills. It's widely used by companies and developers to create mobile apps with a native look and feel.
+Daily Notes - Activity 1 - Building the Index Page
+ BUILDING AN INDEX PAGE
+
+Building the index page in a web development context typically refers to creating the main or home page of a website. The index page is the first page that users see when they visit a website. Here are the basic steps to build the index page of a website:
+
+1. **HTML Markup**:
+
+Start by creating the HTML structure for your index page. You can use a text editor or an integrated development environment (IDE) to write your HTML code. A basic HTML structure looks like this:
+
+```html
+<!DOCTYPE html>
+<html>
+<head>
+<title>Your Website Title</title>
+</head>
+<body>
+<!-- Your page content goes here -->
+</body>
+</html>
+```
+
+2. **Page Content**:
+
+Inside the `<body>` element, add the content you want to display on the index page. This can include headings, paragraphs, images, links, and other HTML elements. For example:
+
+```html
+<h1>Welcome to My Website</h1>
+<p>This is the main page of my website. Feel free to explore and learn more about our services.</p>
+<a href="/about">Learn More</a>
+```
+
+3. **Styling with CSS** (Optional):
+
+To make your index page visually appealing, you can add CSS (Cascading Style Sheets) for styling. You can include CSS within a `<style>` block in the HTML document or link to an external CSS file.
+
+Example using an external CSS file:
+
+```html
+<link rel="stylesheet" type="text/css" href="styles.css">
+```
+
+4. **JavaScript Interaction** (Optional):
+
+If your index page requires interactive features, you can include JavaScript to add functionality. For example, you might use JavaScript for form validation, animations, or other dynamic behavior.
+
+Example:
+
+```html
+<script src="script.js"></script>
+```
+
+5. **Images and Multimedia** (Optional):
+
+If you want to include images or multimedia content on your index page, you can use the `<img>`, `<audio>`, and `<video>` elements to display these assets.
+
+6. **Testing**:
+
+Test your index page in different web browsers to ensure it displays correctly and that all elements function as expected.
+
+7. **Responsive Design** (Optional):
+
+For a good user experience, consider implementing responsive design techniques to ensure your page looks and functions well on various devices and screen sizes.
+
+8. **SEO Optimization** (Optional):
+
+If your website is intended for public access, consider optimizing your index page for search engines (SEO). This involves adding appropriate meta tags and ensuring your content is search engine-friendly.
+
+9. **Deployment**:
+
+Once your index page is complete, you can deploy it to a web server or hosting platform so that it's accessible on the internet.
+
+10. **Domain Setup** (if applicable):
+
+If you have a custom domain name for your website, configure the DNS settings to point to the web server where your index page is hosted.
+
+Building the index page is the first step in creating a website, and it serves as the main entry point for visitors. You can expand and add more pages and features to your website as your project evolves.
+Daily Notes - Activity 2 - The Pusher App
+ The Pusher App
+
+Pusher is a cloud-based service that provides real-time messaging and event-driven functionality for web and mobile applications. It allows developers to add real-time features like chat, notifications, and live updates to their applications with ease. Here's an overview of Pusher and how to use it in your application:
+
+**Key Components of a Pusher App:**
+
+1. **App**: This is your application, which could be a web or mobile app, and it's where you want to enable real-time features.
+
+2. **Pusher Channels**: Pusher operates on the concept of "channels," which are essentially named rooms where data is pushed to and received from. Your app can subscribe to channels to receive updates.
+
+3. **Events**: Events are the data or messages that are sent over channels. They can carry any payload and are used to convey information from one part of your application to another in real-time.
+
+**How to Use Pusher in Your Application:**
+
+Here are the general steps to integrate Pusher into your application:
+
+1. **Create a Pusher Account**:
+
+Visit the [Pusher website](https://pusher.com/), sign up for an account, and create a new app. You'll receive your Pusher app credentials (App ID, API Key, API Secret, and Cluster) that you'll use in your application.
+
+2. **Install Pusher Library**:
+
+Depending on your technology stack (JavaScript, Python, Ruby, etc.), you'll need to install a Pusher client library to interact with the Pusher service. For example, in a JavaScript-based application, you might use the `pusher-js` library.
+
+```bash
+npm install pusher-js
+```
+
+3. **Initialize Pusher**:
+
+In your application code, initialize Pusher with your app credentials.
+
+```javascript
+const Pusher = require('pusher-js');
+
+const pusher = new Pusher({
+appId: 'YOUR_APP_ID',
+key: 'YOUR_API_KEY',
+secret: 'YOUR_API_SECRET',
+cluster: 'YOUR_CLUSTER',
+encrypted: true,
+});
+```
+
+4. **Subscribe to a Channel**:
+
+You can subscribe to a specific channel in your app. Channels can be public or private, and they can represent different aspects of your app (e.g., chat, notifications).
+
+```javascript
+const channel = pusher.subscribe('my-channel');
+```
+
+5. **Bind to Events**:
+
+Once you've subscribed to a channel, you can bind to events that you want to listen for. For example, you might listen for a 'new-message' event.
+
+```javascript
+channel.bind('new-message', function(data) {
+// Handle the new message data here
+});
+```
+
+6. **Trigger Events**:
+
+In other parts of your application, you can trigger events on the channel, and they will be broadcast to all connected clients.
+
+```javascript
+channel.trigger('new-message', {
+text: 'Hello, World!',
+});
+```
+
+7. **Handle Events in Your Application**:
+
+Implement logic in your application to handle events when they are received. For example, when a 'new-message' event is received, you can update a chat interface with the new message.
+
+Pusher simplifies real-time communication in your applications, making it relatively easy to add features like chat, live updates, and notifications. The above steps provide a high-level overview of how to use Pusher, but the specific implementation details can vary depending on the technology stack you are using.
+My Views on the Day
+ My views on the day
+
+- the most important feature of the day was building the index page, the Pusher App
+
+- All the activities were beneficial
+
+- None of the activities were too easy.
+
+- All the activities needed more time
+Daily Notes - Day 2 Reflections
+ Day 2 Reflections
+BUILDING THE INDEX PAGE
+
+- Introduction to day 2
+- More about react native
+- Building the index page
+- The pusher app
+
+
+DAY 3 - BUILDING THE CHAT COMPONENT
+
+ REACT NATIVE CHATS
+
+React Native is a popular framework for building mobile applications using JavaScript and React. To create chat applications in React Native, you'll typically need to implement various components and libraries to handle real-time messaging. Here's a general outline of how you can create a basic chat application in React Native:
+
+1. **Set up your React Native project**: If you haven't already, you need to create a new React Native project. You can do this using the React Native CLI or Expo, depending on your preference.
+
+2. **Navigation**: Implement navigation using a library like React Navigation. This allows you to create multiple screens and navigate between them.
+
+3. **User Authentication**: Set up user authentication to identify users in your chat application. You can use services like Firebase Authentication, AWS Cognito, or implement your own authentication system.
+
+4. **Real-time Database or Backend**: To handle real-time messaging, you'll need a backend service or database that can support real-time data synchronization. Some popular options include Firebase Realtime Database, Firestore, or a custom Node.js server using technologies like WebSocket or GraphQL subscriptions.
+
+5. **Chat UI**: Create the user interface for your chat, which typically includes a chat list, chat bubbles, and input fields. You can use React Native's core components and third-party libraries to build the UI. Popular libraries for chat UI components include `react-native-gifted-chat` and `react-native-gifted-messenger`.
+
+6. **Real-time Messaging**: Implement real-time messaging functionality. If you're using Firebase, you can use Firebase Realtime Database or Firestore to store and sync messages in real time. If you're building a custom backend, you'll need to implement WebSockets or another real-time communication protocol.
+
+7. **User List**: Create a user list so that users can select who they want to chat with. You can use a flat list or a scrollable list of users.
+
+8. **Notifications**: Implement push notifications to alert users about new messages when the app is not in the foreground. You can use services like Firebase Cloud Messaging (FCM) or Apple Push Notification Service (APNs) for this.
+
+9. **Additional Features**: Depending on your requirements, you may want to add features like multimedia support (images, videos), typing indicators, message timestamps, and group chats.
+
+10. **Testing and Deployment**: Test your app on both iOS and Android devices and then deploy it to the respective app stores (Google Play Store and Apple App Store).
+
+Remember that building a chat application involves handling complex real-time data synchronization, security, and scalability considerations. It's essential to pay attention to error handling, security, and performance optimization to create a reliable and user-friendly chat app. You may also need to comply with privacy regulations, such as GDPR or HIPAA, depending on the nature of your app and your user base.
+Daily Notes - React Native Chats
+ REACT NATIVE CHATS
+
+React Native is a popular framework for building mobile applications using JavaScript and React. To create chat applications in React Native, you'll typically need to implement various components and libraries to handle real-time messaging. Here's a general outline of how you can create a basic chat application in React Native:
+
+1. **Set up your React Native project**: If you haven't already, you need to create a new React Native project. You can do this using the React Native CLI or Expo, depending on your preference.
+
+2. **Navigation**: Implement navigation using a library like React Navigation. This allows you to create multiple screens and navigate between them.
+
+3. **User Authentication**: Set up user authentication to identify users in your chat application. You can use services like Firebase Authentication, AWS Cognito, or implement your own authentication system.
+
+4. **Real-time Database or Backend**: To handle real-time messaging, you'll need a backend service or database that can support real-time data synchronization. Some popular options include Firebase Realtime Database, Firestore, or a custom Node.js server using technologies like WebSocket or GraphQL subscriptions.
+
+5. **Chat UI**: Create the user interface for your chat, which typically includes a chat list, chat bubbles, and input fields. You can use React Native's core components and third-party libraries to build the UI. Popular libraries for chat UI components include `react-native-gifted-chat` and `react-native-gifted-messenger`.
+
+6. **Real-time Messaging**: Implement real-time messaging functionality. If you're using Firebase, you can use Firebase Realtime Database or Firestore to store and sync messages in real time. If you're building a custom backend, you'll need to implement WebSockets or another real-time communication protocol.
+
+7. **User List**: Create a user list so that users can select who they want to chat with. You can use a flat list or a scrollable list of users.
+
+8. **Notifications**: Implement push notifications to alert users about new messages when the app is not in the foreground. You can use services like Firebase Cloud Messaging (FCM) or Apple Push Notification Service (APNs) for this.
+
+9. **Additional Features**: Depending on your requirements, you may want to add features like multimedia support (images, videos), typing indicators, message timestamps, and group chats.
+
+10. **Testing and Deployment**: Test your app on both iOS and Android devices and then deploy it to the respective app stores (Google Play Store and Apple App Store).
+
+Remember that building a chat application involves handling complex real-time data synchronization, security, and scalability considerations. It's essential to pay attention to error handling, security, and performance optimization to create a reliable and user-friendly chat app. You may also need to comply with privacy regulations, such as GDPR or HIPAA, depending on the nature of your app and your user base.
+Daily Notes - Activity 1 - Building the chat component
+ BUILDING CHAT COMPONENT
+
+Create a new Chat.js file inside the components directory and add the following content:
+
+/* components/Chat.js */
+
+import React, { Component, Fragment } from 'react';
+
+import axios from 'axios';
+
+import Pusher from 'pusher-js';
+
+class Chat extends Component {
+
+state = { chats: [] }
+
+componentDidMount() {
+
+this.pusher = new Pusher(process.env.PUSHER_APP_KEY, {
+
+cluster: process.env.PUSHER_APP_CLUSTER,
+
+encrypted: true
+
+});
+
+this.channel = this.pusher.subscribe('chat-room');
+
+this.channel.bind('new-message', ({ chat = null }) => {
+
+const { chats } = this.state;
+
+chat && chats.push(chat);
+
+this.setState({ chats });
+
+});
+
+this.pusher.connection.bind('connected', () => {
+
+axios.post('/messages')
+
+.then(response => {
+
+const chats = response.data.messages;
+
+this.setState({ chats });
+
+});
+
+});
+
+}
+
+componentWillUnmount() {
+
+this.pusher.disconnect();
+
+}
+
+}
+
+export default Chat;
+
+Here is a simple break down of what we’ve done:
+
+We first initialized the state to contain an empty chats array property. This chats property will be populated with chat messages as they keep coming. When the component mounts, we set up a Pusher connection and channel subscription inside the componentDidMount() lifecycle method.
+You can see that we are subscribing to a Pusher channel called chat-room for our chat application. We are then binding to the new-messageevent on the channel, which is triggered when a new chat message comes in. Next, we simply populate the state chats property by appending the new chat.
+Also, on the componentDidMount() method, we are binding to the connected event on the Pusher client, when it is freshly connected, to fetch all the chat messages from history by making a POST /messagesHTTP request using the axios library. Afterwards, we populate the state chats property with the chat messages received in the response.
+Daily Notes - Activity 2 - Building the chat component: Part 2
+ BUILDING THE CHAT COMPONENT: PART 2
+
+The Chat component is not completed yet. We still need to add a render() method. Let’s do that quickly.
+Instructions
+Add the following snippet to the Chat component class:
+
+/* components/Chat.js */
+
+handleKeyUp = evt => {
+
+const value = evt.target.value;
+
+if (evt.keyCode === 13 && !evt.shiftKey) {
+
+const { activeUser: user } = this.props;
+
+const chat = { user, message: value, timestamp: +new Date };
+
+evt.target.value = '';
+
+axios.post('/message', chat);
+
+}
+
+}
+
+render() {
+
+return (this.props.activeUser && <Fragment>
+
+<div className="border-bottom border-gray w-100 d-flex align-items-center bg-white" style={{ height: 90 }}>
+
+<h2 className="text-dark mb-0 mx-4 px-2">{this.props.activeUser}</h2>
+
+</div>
+
+<div className="border-top border-gray w-100 px-4 d-flex align-items-center bg-light" style={{ minHeight: 90 }}>
+
+<textarea className="form-control px-3 py-2" onKeyUp={this.handleKeyUp} placeholder="Enter a chat message" style={{ resize: 'none' }}></textarea>
+
+</div>
+
+</Fragment> )
+
+}
+Daily Notes - Activity 3 - Adding the chat component to the index page
+ ADDING THE CHAT COMPONENT TO THE INDEX PAGE
+
+Instructions
+As seen in the render() method, we require an activeUser prop to identify the currently active user. We also rendered a <textarea> element for entering a chat message. We added an onKeyUp event handler to the <textarea> to send the chat message when you press the enter or return button.
+
+On the handleKeyUp() event handler, we construct a chat object containing the user sending the message (currently active user), the message itself, and then the timestamp for when the message was sent.
+
+We clean up the <textarea>and then make a POST /message HTTP request, passing the chatobject we created as payload. Let’s add the Chat component to our index page.
+
+Instructions:
+First, add the following line to the import statements in the pages/index.js file.
+/* pages/index.js */
+
+// other import statements here ...
+
+import Chat from '../components/Chat';
+
+Next, locate the render() method of the IndexPage component. Render the Chat component in the empty <section>element. It should look like the following snippet:
+/* pages/index.js */
+
+<section className="col-md-4 position-relative d-flex flex-wrap h-100 align-items-start align-content-between bg-white px-0">
+
+{ user && <Chat activeUser={user} /> }
+
+</section>
+Daily Notes - Activity 4 - Adding the chat component to the index page
+ ADDING THE CHAT COMPONENT TO THE INDEX PAGE
+
+For now, nothing really happens when you try to send a chat message. You don’t see any message or any chat history. This is because we have not implemented the two routes we are making requests to. We will go ahead and create the /message and /messages routes.
+Instructions
+Modify the server.js file and add the following just before the call to server.listen()inside the then() callback function:
+
+/* server.js */
+
+// server.get('*') is here ...
+
+const chatHistory = { messages: [] };
+
+server.post('/message', (req, res, next) => {
+
+const { user = null, message = '', timestamp = +new Date } = req.body;
+
+const sentimentScore = sentiment.analyze(message).score;
+
+const chat = { user, message, timestamp, sentiment: sentimentScore };
+
+chatHistory.messages.push(chat);
+
+pusher.trigger('chat-room', 'new-message', { chat });
+
+});
+
+server.post('/messages', (req, res, next) => {
+
+res.json({ ...chatHistory, status: 'success' });
+
+});
+
+// server.listen() is here …
+
+First, we created a kind of in-memory store for our chat history, to store chat messages in an array. This is useful for new clients that join the chat room to see previous messages. Whenever the Pusher client makes a POST request to the /messages endpoint on connection, it gets all the messages in the chat history in the returned response.
+
+On the POST /message route, we are fetching the chat payload from req.body through the help of the body-parsermiddleware we added earlier. We then use the sentiment module to calculate the overall sentiment score of the chat message. Next, we reconstruct the chat object, adding the sentiment property containing the sentiment score.
+
+Finally, we add the chat to the chat history messages, and then trigger a new-message event on the chat-room Pusher channel, passing the chatobject in the event data. This does the real time magic.
+
+We are just a few steps away from completing our chat application. If you load the app on your browser now and try sending a chat message, you don’t see any feedback yet. That’s not because our app is not working. It is working perfectly. It’s simply because we are not yet rendering the chat messages on the view. Let’s head on to that and finish this up.
+My Views on the Day
+ MY VIEWS ON THE DAY
+
+- The most important feature of the day was adding the components.
+
+- All the activities were beneficial.
+
+- None of the activities.
+
+- All the activities needed more time
+Daily Notes - Day 3 Reflections
+ DAY 3 REFLECTIONS
+BUILDING THE CHAT COMPONENT
+
+- I ntroduction to day
+- React Native chats
+- Building the chat components
+- Building the chat component: Part 2
+- Adding the chat component to the index page
